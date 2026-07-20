@@ -179,3 +179,47 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+
+# npm stuff
+# Dependency directories (never commit these)
+node_modules/
+jspm_packages/
+web_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environmental variables and secrets (contains passwords/API keys)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+
+# Diagnostic reports (Next.js / Node.js)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# npm cibuildclean cache
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Output/build directories (adjust based on your framework)
+dist/
+build/
+.next/
+.nuxt/
+out/
