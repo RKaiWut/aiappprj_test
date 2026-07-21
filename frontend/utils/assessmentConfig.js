@@ -3,6 +3,22 @@ export const sexOptions = [
   { label: 'Male', value: 1 }
 ];
 
+// Chest pain triage questions for clinical assessment
+export const chestPainTriageQuestions = [
+  { id: 'center-location', label: 'Is the pain located in the center of your chest?', required: true, options: yesNoOptions },
+  { id: 'exercise-trigger', label: 'Is it brought on by physical exercise or emotional stress?', required: true, options: yesNoOptions },
+  { id: 'rest-relief', label: 'Does it go away within 5 to 15 minutes when you rest?', required: true, options: yesNoOptions }
+];
+
+// Map triage answers to CAD dataset values (1-4)
+export const chestPainTriageToValue = {
+  'no-no-yes': 3,   // Non-anginal pain
+  'no-yes-yes': 2,  // Atypical angina
+  'yes-no-yes': 2,  // Atypical angina
+  'yes-yes-yes': 1, // Typical angina
+  default: 4        // Asymptomatic (fallback)
+};
+
 export const chestPainOptions = [
   { label: 'Chest pain; Usually brief; After emotional or physical stress (typical angina)', value: 1 },
   { label: 'Chest pain or near chest; Sharp and random (atypical angina)', value: 2 },
