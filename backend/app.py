@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .services.genai_service import test_msg
 
 from .routes.predict import router as predict_router
+from .services.chatbot import router as chatbot_router
 
 app = FastAPI(
     title='CAD Risk Assessment API',
@@ -19,8 +19,4 @@ app.add_middleware(
 )
 
 app.include_router(predict_router, prefix='/api', tags=['prediction'])
-
-@app.get("/chatbot")
-def chatbot():
-    result = test_msg()
-    return {"result": result}
+app.include_router(chatbot_router, prefix='/api', tags=['chat'])

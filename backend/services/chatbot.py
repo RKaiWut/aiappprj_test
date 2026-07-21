@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from pathlib import Path
 
 from ..model.schemas import (
     ChatSessionRequest,
@@ -74,10 +75,9 @@ def chat(payload: ChatMessageRequest):
         assessment=session["assessment"],
         prediction=session["prediction"],
         knowledge=knowledge,
-        messages=session["messages"],
-        current_message=payload.message,
+        messages=session["messages"]
     )
-
+    Path("last_prompt.txt").write_text(prompt, encoding="utf-8")
     reply = generate_response(prompt)
 
     add_assistant_message(

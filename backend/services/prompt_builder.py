@@ -89,8 +89,11 @@ Top Contributing Factors:
 {format_top_factors(prediction["top_factors"])}
 
 # Reference Information
+=== Knowledge Start ===
 
 {knowledge}
+
+=== Knowledge End ===
 
 # Conversation History (Latest message is current message)
 
