@@ -26,8 +26,8 @@ EXPECTED_FEATURES = [
 
 def load_artifacts():
     candidates = [
-        Path('exports/production_bundle.pkl'),
-        Path('../exports/production_bundle.pkl')
+        Path('models/production_bundle.pkl'),
+        Path('../models/production_bundle.pkl')
     ]
 
     for candidate in candidates:

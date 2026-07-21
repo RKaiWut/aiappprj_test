@@ -7,7 +7,9 @@ import {
   assessmentSteps,
   fieldOrder,
   getFieldDefinition,
-  stepFieldMap
+  stepFieldMap,
+  chestPainTriageQuestions,
+  chestPainTriageToValue
 } from '../utils/assessmentConfig';
 import { buildAssessmentPayload } from '../utils/payload';
 import { useAssessmentForm } from '../hooks/useAssessmentForm';
@@ -41,6 +43,10 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
   const canGoNext = stepIndex < assessmentSteps.length - 1;
 
   function goNext() {
+    // Validate required fields before moving to next step
+    if (!validateAll()) {
+      return;
+    }
     setStepIndex((current) => Math.min(current + 1, assessmentSteps.length - 1));
   }
 
@@ -52,26 +58,52 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
     setStepIndex(nextStepIndex);
   }
 
+  // Get answered count per group with color coding
+  function getGroupProgress() {
+    return assessmentFieldGroups.map((group) => {
+      const groupFields = group.fields;
+      const answeredCount = groupFields.filter((fieldName) => answeredSet.has(fieldName)).length;
+      const totalCount = groupFields.length;
+      const isOptional = group.description.includes('Optional');
+      
+      // Determine color: green (complete), lime (optional incomplete), orange (incomplete)
+      let statusClass = 'progress-group--orange';
+      if (answeredCount === totalCount) {
+        statusClass = 'progress-group--green';
+      } else if (isOptional && answeredCount > 0) {
+        statusClass = 'progress-group--lime';
+      }
+
+      return {
+        ...group,
+        answeredCount,
+        totalCount,
+        statusClass
+      };
+    });
+  }
+
   function renderStepSummary() {
+    const groupProgress = getGroupProgress();
+    
     return (
       <aside className="assessment-progress" aria-label="Assessment progress">
-        <SectionCard title="Your progress" description="Always visible so you can see what you have already answered.">
+        <SectionCard title="Your progress" description="Track your answers by section.">
           <div className="progress-metric">
             <strong>{getAnsweredCount()}</strong>
             <span>of {fieldOrder.length} answered</span>
           </div>
           <div className="progress-list">
-            {fieldOrder.map((fieldName) => {
-              const field = getFieldDefinition(fieldName);
-              const answered = answeredSet.has(fieldName);
-
-              return (
-                <div key={fieldName} className={answered ? 'progress-item progress-item--done' : 'progress-item'}>
-                  <span>{answered ? '✓' : '•'}</span>
-                  <span>{field.label}</span>
+            {groupProgress.map((group) => (
+              <div key={group.id} className={`progress-group ${group.statusClass}`}>
+                <div className="progress-group__header">
+                  <strong>{group.title}</strong>
+                  <span className="progress-group__count">
+                    {group.answeredCount}/{group.totalCount} answered
+                  </span>
                 </div>
-              );
-            })}
+              </div>
+            ))}
           </div>
         </SectionCard>
       </aside>
@@ -86,6 +118,23 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
 
     const payload = buildAssessmentPayload(values);
     await onSubmitAssessment(payload);
+  }
+
+  // Get unanswered fields grouped by section
+  function getUnansweredFieldsByGroup() {
+    const result = {};
+    assessmentFieldGroups.forEach((group) => {
+      const unansweredFields = group.fields.filter((fieldName) => 
+        values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined
+      );
+      if (unansweredFields.length > 0) {
+        result[group.id] = {
+          ...group,
+          fields: unansweredFields.map((fieldName) => getFieldDefinition(fieldName))
+        };
+      }
+    });
+    return result;
   }
 
   return (
@@ -108,7 +157,6 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                     <span className="stepper-item__index">{index + 1}</span>
                     <span className="stepper-item__text">
                       <strong>{step.title}</strong>
-                      <small>{step.description}</small>
                     </span>
                   </button>
                 );
@@ -122,7 +170,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                   <p>Only fill in what you can see or remember. Things you don't remember can stay blank.</p>
                   <ul>
                     <li>It should take only a few minutes!</li>
-                    <li>You can check your progress on the side..</li>
+                    <li>You can check your progress on the side.</li>
                     <li>Fields that require your ECG (medical) results are optional.</li>
                   </ul>
                 </div>
@@ -151,7 +199,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
 
                   <div className="assessment-review__section">
                     <h3>Still blank</h3>
-                    <div className="assessment-review__list">
+                    <div className="assessment-review__list assessment-review__grid">
                       {fieldOrder.filter((fieldName) => values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined).length ? (
                         fieldOrder
                           .filter((fieldName) => values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined)

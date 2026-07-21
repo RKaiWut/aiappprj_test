@@ -382,6 +382,102 @@ button {
   font-size: 0.92rem;
 }
 
+/* Radio button group styling */
+.radio-group {
+  display: grid;
+  gap: 10px;
+}
+
+.radio-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: white;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.radio-option:hover {
+  background: var(--surface-muted);
+}
+
+.radio-option input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
+.radio-option span {
+  font-size: 0.95rem;
+}
+
+/* Helper text above label */
+.form-field__help {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.88rem;
+  color: var(--text-muted);
+}
+
+/* Progress section colors */
+.progress-section--completed {
+  background: rgba(30, 107, 82, 0.06);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.progress-section--optional-missing {
+  background: #a3e635;
+  border-color: #a3e635;
+  color: #123026;
+}
+
+.progress-section--incomplete {
+  background: #fb923c;
+  border-color: #fb923c;
+  color: #123026;
+}
+
+/* Horizontal stepper */
+.stepper-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stepper-item--horizontal {
+  flex: 0 0 auto;
+  padding: 10px 16px;
+  text-align: center;
+  justify-content: center;
+}
+
+.stepper-item__text--horizontal {
+  display: block;
+  gap: 2px;
+}
+
+.stepper-item__text small {
+  font-size: 0.8rem;
+}
+
+/* Review section grid */
+.assessment-review-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 640px) {
+  .assessment-review-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .disclaimer {
   padding: 14px 18px;
   border-left: 4px solid var(--accent);

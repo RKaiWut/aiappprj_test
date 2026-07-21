@@ -3,6 +3,11 @@ export const sexOptions = [
   { label: 'Male', value: 1 }
 ];
 
+export const yesNoOptions = [
+  { label: 'No', value: 0 },
+  { label: 'Yes', value: 1 }
+];
+
 // Chest pain triage questions for clinical assessment
 export const chestPainTriageQuestions = [
   { id: 'center-location', label: 'Is the pain located in the center of your chest?', required: true, options: yesNoOptions },
@@ -19,17 +24,6 @@ export const chestPainTriageToValue = {
   default: 4        // Asymptomatic (fallback)
 };
 
-export const chestPainOptions = [
-  { label: 'Chest pain; Usually brief; After emotional or physical stress (typical angina)', value: 1 },
-  { label: 'Chest pain or near chest; Sharp and random (atypical angina)', value: 2 },
-  { label: 'Pain or discomfort not necessarily near chest (non-anginal pain)', value: 3 },
-  { label: 'No chest pain (asymptomatic)', value: 4 }
-];
-
-export const yesNoOptions = [
-  { label: 'No', value: 0 },
-  { label: 'Yes', value: 1 }
-];
 
 export const restingEcgOptions = [
   { label: 'Normal', value: 0 },
@@ -67,8 +61,7 @@ export const assessmentFields = {
     min: 18,
     max: 128,
     step: 1,
-    helper: '(in years).',
-    placeholder: 'e.g. 54'
+    helper: '(in years)'
   },
   sex: {
     name: 'sex',
@@ -80,11 +73,12 @@ export const assessmentFields = {
   },
   cp: {
     name: 'cp',
-    label: 'Chest pain',
-    kind: 'select',
+    label: 'Chest pain type',
+    kind: 'triage',
     required: true,
-    options: chestPainOptions,
-    helper: 'Choose the closest match.'
+    inputType: 'radio',
+    options: chestPainTriageQuestions,
+    helper: 'Answer all three questions below to determine your chest pain category.'
   },
   trestbps: {
     name: 'trestbps',
@@ -95,8 +89,7 @@ export const assessmentFields = {
     min: 50,
     max: 250,
     step: 1,
-    helper: 'From a recent blood test, if available. (trestbps)',
-    placeholder: 'Leave blank if unknown'
+    helper: '(mmHg, from recent blood test if available)'
   },
   chol: {
     name: 'chol',
@@ -107,8 +100,7 @@ export const assessmentFields = {
     min: 100,
     max: 700,
     step: 1,
-    helper: 'From a recent blood test, if available.',
-    placeholder: 'Leave blank if unknown'
+    helper: '(mg/dL, from recent blood test if available)'
   },
   fbs: {
     name: 'fbs',
@@ -116,7 +108,7 @@ export const assessmentFields = {
     kind: 'select',
     required: false,
     options: yesNoOptions,
-    helper: 'From a recent blood test, if available. Yes if greater or equal to 120 mg/dL, no otherwise.'
+    helper: '(Yes if ≥120 mg/dL, no otherwise)'
   },
   restecg: {
     name: 'restecg',
@@ -125,7 +117,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: restingEcgOptions,
-    helper: 'From a recent ECG test, if available.'
+    helper: '(from recent ECG test if available)'
   },
   thalach: {
     name: 'thalach',
@@ -136,8 +128,7 @@ export const assessmentFields = {
     min: 60,
     max: 250,
     step: 1,
-    helper: 'From an exercise test, if you have it.',
-    placeholder: 'Leave blank if unknown'
+    helper: '(bpm, from exercise test if available)'
   },
   exang: {
     name: 'exang',
@@ -145,7 +136,7 @@ export const assessmentFields = {
     kind: 'select',
     required: true,
     options: yesNoOptions,
-    helper: 'Pain, pressure, or tightness that comes on with exercise.'
+    helper: 'Pain, pressure, or tightness that comes on with exercise'
   },
   oldpeak: {
     name: 'oldpeak',
@@ -156,8 +147,7 @@ export const assessmentFields = {
     min: 0,
     max: 10,
     step: 0.1,
-    helper: 'Use only if a clinic report shows this value.',
-    placeholder: 'Leave blank if unknown'
+    helper: '(mm, from exercise ECG report if available)'
   },
   slope: {
     name: 'slope',
@@ -166,7 +156,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: slopeOptions,
-    helper: 'Only if you have the exercise ECG result.'
+    helper: '(from exercise ECG report if available)'
   },
   ca: {
     name: 'ca',
@@ -175,7 +165,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: caOptions,
-    helper: 'Only if you have a clinic report for this.'
+    helper: '(from clinic report if available)'
   },
   thal: {
     name: 'thal',
@@ -184,7 +174,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: thalOptions,
-    helper: 'Only if this appears on your report.'
+    helper: '(from clinic report if available)'
   }
 };
 
@@ -222,23 +212,23 @@ export const assessmentSteps = [
     description: 'Quick overview before the questions begin.'
   },
   {
-    id: 'basics',
-    title: 'Basics',
-    description: 'Simple background details.'
+    id: 'personal-information',
+    title: 'Personal Information',
+    description: 'Basic patient context used by the trained model.'
   },
   {
     id: 'symptoms',
     title: 'Symptoms',
-    description: 'What you feel during activity.'
+    description: 'Reported chest pain and exercise response.'
   },
   {
     id: 'measurements',
     title: 'Measurements',
-    description: 'Only fill these in if you know them.'
+    description: 'Vital signs and core lab measurements.'
   },
   {
     id: 'clinic-details',
-    title: 'Clinic details',
+    title: 'Clinic Details',
     description: 'Optional report-only details.'
   },
   {
@@ -249,22 +239,22 @@ export const assessmentSteps = [
 ];
 
 export const stepFieldMap = {
-  basics: ['age', 'sex'],
+  personalInformation: ['age', 'sex'],
   symptoms: ['cp', 'exang'],
   measurements: ['trestbps', 'chol', 'fbs', 'thalach'],
-  'clinic-details': ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
+  clinicDetails: ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
 };
 
 export const fieldOrder = [
   'age',
   'sex',
   'cp',
+  'exang',
   'trestbps',
   'chol',
   'fbs',
   'restecg',
   'thalach',
-  'exang',
   'oldpeak',
   'slope',
   'ca',
