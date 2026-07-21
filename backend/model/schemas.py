@@ -44,3 +44,24 @@ class PredictionResponse(BaseModel):
     top_factors: list[PredictionFactor]
     lifestyle_advice: list[str]
     medical_disclaimer: str
+
+
+from pydantic import BaseModel
+
+
+class ChatSessionRequest(BaseModel):
+    assessment: dict
+    prediction: dict
+
+
+class ChatSessionResponse(BaseModel):
+    session_id: str
+
+
+class ChatMessageRequest(BaseModel):
+    session_id: str
+    message: str
+
+
+class ChatMessageResponse(BaseModel):
+    reply: str
