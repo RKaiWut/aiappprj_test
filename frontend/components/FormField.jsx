@@ -1,25 +1,28 @@
-export default function FormField({ field, value, error, onChange, onBlur }) {
+export default function FormField({ field, value, values, error, onChange, onBlur }) {
   const id = `field-${field.name}`;
-  
-  // Helper text position: above label for radio inputs, below for others
   const showHelperAbove = field.inputType === 'radio';
-  const helperText = field.required ? field.helper : `${field.helper} You can leave this blank if you do not know it.`;
+  const helperText = field.required
+    ? field.helper
+    : `${field.helper} Leave blank if unknown.`;
 
   return (
-    <label className="form-field" htmlFor={id}>
+    <label className={`form-field${field.kind === 'triage' ? ' form-field--wide' : ''}`} htmlFor={id}>
       {showHelperAbove ? (
         <span className="form-field__help">{helperText}</span>
       ) : null}
-      
+
       <span className="form-field__label">
         {field.label}
-        {field.required ? <span className="form-field__required">Required</span> : <span className="form-field__optional">Optional</span>}
+        {field.required ? (
+          <span className="form-field__required">Required</span>
+        ) : (
+          <span className="form-field__optional">Optional</span>
+        )}
       </span>
-      
+
       {field.kind === 'triage' && field.inputType === 'radio' ? (
-        // Triage mode: show 3 yes/no questions for chest pain
         <div className="triage-group">
-          {field.options.map((question, index) => (
+          {field.options.map((question) => (
             <div key={question.id} className="triage-question">
               <span className="triage-question__label">{question.label}</span>
               <div className="radio-options">
@@ -30,7 +33,7 @@ export default function FormField({ field, value, error, onChange, onBlur }) {
                       id={`${id}-${question.id}-${option.value}`}
                       name={`${field.name}-${question.id}`}
                       value={option.value}
-                      checked={String(value) === String(option.value)}
+                      checked={String(values[`${field.name}-${question.id}`]) === String(option.value)}
                       onChange={onChange}
                       onBlur={onBlur}
                       aria-invalid={Boolean(error)}
@@ -43,7 +46,6 @@ export default function FormField({ field, value, error, onChange, onBlur }) {
           ))}
         </div>
       ) : field.kind === 'select' && field.inputType === 'radio' ? (
-        // Regular radio buttons for select fields
         <div className="radio-group">
           {field.options.map((option) => (
             <label key={option.value} className="radio-option">
@@ -61,10 +63,9 @@ export default function FormField({ field, value, error, onChange, onBlur }) {
             </label>
           ))}
         </div>
-      ) : field.kind === 'select' && field.inputType === 'triage' ? (
-        // Triage mode: show bypass dropdown
+      ) : field.kind === 'select' ? (
         <select id={id} name={field.name} value={value} onChange={onChange} onBlur={onBlur} aria-invalid={Boolean(error)}>
-          <option value="">{field.helper}</option>
+          <option value="">{field.optionalLabel ?? 'Select an option'}</option>
           {field.options.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
@@ -87,8 +88,8 @@ export default function FormField({ field, value, error, onChange, onBlur }) {
           aria-invalid={Boolean(error)}
         />
       )}
-      
-      {!showHelperAbove && error ? <span className="form-field__error">{error}</span> : null}
+
+      {error ? <span className="form-field__error">{error}</span> : null}
     </label>
   );
 }

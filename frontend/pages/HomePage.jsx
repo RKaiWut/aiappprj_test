@@ -6,12 +6,13 @@ export default function HomePage({ onStartAssessment }) {
   return (
     <div className="page-stack">
       <SectionCard
-        title="Cardiovascular risk screening for a waiting-room workflow"
-        description="A minimal prototype for estimating CAD risk from standard clinical features while keeping the assessment process fast and easy to read."
+        title="Heart health screening"
+        description="Estimate coronary artery disease (CAD) risk from standard clinical information."
       >
         <div className="hero-copy">
           <p>
-            This prototype is designed for Singaporean users who want a quick assessment while waiting for a longer checkup. The current build focuses on clean data entry, predictable API flow, and a foundation that can later support chatbot guidance.
+            Answer a short set of questions about your age, symptoms, and any clinic results you already have.
+            ECG and lab fields are optional.
           </p>
           <div className="hero-actions">
             <PrimaryButton onClick={onStartAssessment}>Start Assessment</PrimaryButton>

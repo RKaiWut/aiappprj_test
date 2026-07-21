@@ -7,22 +7,40 @@ import {
   assessmentSteps,
   fieldOrder,
   getFieldDefinition,
-  stepFieldMap,
-  chestPainTriageQuestions,
-  chestPainTriageToValue
+  stepFieldMap
 } from '../utils/assessmentConfig';
-import { buildAssessmentPayload } from '../utils/payload';
+import {
+  getChestPainTriageAnswers,
+  isFieldAnswered
+} from '../utils/payload';
 import { useAssessmentForm } from '../hooks/useAssessmentForm';
 import { useMemo, useState } from 'react';
 
-function formatFieldValue(field, value) {
-  if (value === '' || value === null || value === undefined) {
+function formatFieldValue(field, values, fieldName) {
+  if (fieldName === 'cp') {
+    const answers = getChestPainTriageAnswers(values);
+    if (!Object.keys(answers).length) {
+      return 'Not provided';
+    }
+
+    const labels = {
+      yes: 'Yes',
+      no: 'No'
+    };
+    return field.options
+      .filter((question) => answers[question.id])
+      .map((question) => `${question.label.replace(/\?$/, '')}: ${labels[answers[question.id]]}`)
+      .join('; ');
+  }
+
+  const value = values[fieldName];
+  if (!isFieldAnswered(fieldName, values)) {
     return 'Not provided';
   }
 
   if (field.kind === 'select') {
     const option = field.options.find((entry) => String(entry.value) === String(value));
-    return option ? option.label : 'Not provided';
+    return option ? option.label : String(value);
   }
 
   return String(value);
@@ -30,23 +48,32 @@ function formatFieldValue(field, value) {
 
 export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }) {
   const [stepIndex, setStepIndex] = useState(0);
-  const { values, errors, handleChange, handleBlur, validateAll, getAnsweredCount, getAnsweredNames } = useAssessmentForm();
+  const {
+    values,
+    errors,
+    handleChange,
+    handleBlur,
+    validateFields,
+    validateAll,
+    getAnsweredCount,
+    getAnsweredNames
+  } = useAssessmentForm();
 
   const answeredFieldNames = getAnsweredNames();
   const answeredSet = useMemo(() => new Set(answeredFieldNames), [answeredFieldNames]);
   const currentStep = assessmentSteps[stepIndex];
-
-  const stepFieldNames = currentStep?.id && stepFieldMap[currentStep.id] ? stepFieldMap[currentStep.id] : [];
-  const currentFields = stepFieldNames.map((fieldName) => getFieldDefinition(fieldName)).filter(Boolean);
+  const currentStepFields = stepFieldMap[currentStep?.id] ?? [];
+  const currentFields = currentStepFields.map((fieldName) => getFieldDefinition(fieldName)).filter(Boolean);
+  const validationErrors = Object.values(errors).filter(Boolean);
 
   const canGoPrevious = stepIndex > 0;
   const canGoNext = stepIndex < assessmentSteps.length - 1;
 
   function goNext() {
-    // Validate required fields before moving to next step
-    if (!validateAll()) {
+    if (currentStep?.id !== 'intro' && currentStepFields.length > 0 && !validateFields(currentStepFields)) {
       return;
     }
+
     setStepIndex((current) => Math.min(current + 1, assessmentSteps.length - 1));
   }
 
@@ -58,15 +85,12 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
     setStepIndex(nextStepIndex);
   }
 
-  // Get answered count per group with color coding
   function getGroupProgress() {
     return assessmentFieldGroups.map((group) => {
-      const groupFields = group.fields;
-      const answeredCount = groupFields.filter((fieldName) => answeredSet.has(fieldName)).length;
-      const totalCount = groupFields.length;
-      const isOptional = group.description.includes('Optional');
-      
-      // Determine color: green (complete), lime (optional incomplete), orange (incomplete)
+      const answeredCount = group.fields.filter((fieldName) => answeredSet.has(fieldName)).length;
+      const totalCount = group.fields.length;
+      const isOptional = group.id === 'ecg-clinical-findings';
+
       let statusClass = 'progress-group--orange';
       if (answeredCount === totalCount) {
         statusClass = 'progress-group--green';
@@ -85,10 +109,10 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
 
   function renderStepSummary() {
     const groupProgress = getGroupProgress();
-    
+
     return (
       <aside className="assessment-progress" aria-label="Assessment progress">
-        <SectionCard title="Your progress" description="Track your answers by section.">
+        <SectionCard title="Progress" description="Sections you have completed.">
           <div className="progress-metric">
             <strong>{getAnsweredCount()}</strong>
             <span>of {fieldOrder.length} answered</span>
@@ -99,7 +123,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                 <div className="progress-group__header">
                   <strong>{group.title}</strong>
                   <span className="progress-group__count">
-                    {group.answeredCount}/{group.totalCount} answered
+                    {group.answeredCount}/{group.totalCount}
                   </span>
                 </div>
               </div>
@@ -116,45 +140,32 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
       return;
     }
 
-    const payload = buildAssessmentPayload(values);
-    await onSubmitAssessment(payload);
+    await onSubmitAssessment(values);
   }
 
-  // Get unanswered fields grouped by section
-  function getUnansweredFieldsByGroup() {
-    const result = {};
-    assessmentFieldGroups.forEach((group) => {
-      const unansweredFields = group.fields.filter((fieldName) => 
-        values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined
-      );
-      if (unansweredFields.length > 0) {
-        result[group.id] = {
-          ...group,
-          fields: unansweredFields.map((fieldName) => getFieldDefinition(fieldName))
-        };
-      }
-    });
-    return result;
-  }
+  const answeredFields = fieldOrder.filter((fieldName) => isFieldAnswered(fieldName, values));
+  const blankFields = fieldOrder.filter((fieldName) => !isFieldAnswered(fieldName, values));
 
   return (
     <div className="page-stack">
       <div className="assessment-layout">
         <div className="assessment-main">
-          <SectionCard title="Assessment" description="Short steps, plain language, and optional clinic-only details.">
+          <SectionCard title="Heart health check" description="A few short steps. Only fill in what you know.">
             <div className="stepper" aria-label="Assessment steps">
-              {assessmentSteps.map((step, index) => {
-                const isActive = index === stepIndex;
-                const isDone = index < stepIndex;
+              {assessmentSteps.filter((step) => step.id !== 'intro').map((step, index) => {
+                const actualIndex = index + 1;
+                const isActive = actualIndex === stepIndex;
+                const isDone = actualIndex < stepIndex;
 
                 return (
                   <button
                     key={step.id}
                     type="button"
                     className={isActive ? 'stepper-item stepper-item--active' : isDone ? 'stepper-item stepper-item--done' : 'stepper-item'}
-                    onClick={() => goToStep(index)}
+                    onClick={() => goToStep(actualIndex)}
+                    disabled={!isDone && !isActive}
                   >
-                    <span className="stepper-item__index">{index + 1}</span>
+                    <span className="stepper-item__index">{actualIndex}</span>
                     <span className="stepper-item__text">
                       <strong>{step.title}</strong>
                     </span>
@@ -166,31 +177,41 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
             <form className="assessment-form" onSubmit={handleSubmit} noValidate>
               {currentStep?.id === 'intro' ? (
                 <div className="assessment-intro">
-                  <p>This quick check uses your age, sex, symptoms, and any clinic measurements you already know.</p>
-                  <p>Only fill in what you can see or remember. Things you don't remember can stay blank.</p>
+                  <p>This check uses your age, sex, symptoms, and any clinic results you already have.</p>
                   <ul>
-                    <li>It should take only a few minutes!</li>
-                    <li>You can check your progress on the side.</li>
-                    <li>Fields that require your ECG (medical) results are optional.</li>
+                    <li>Takes a few minutes.</li>
+                    <li>ECG and lab fields are optional.</li>
+                    <li>Track progress on the right.</li>
                   </ul>
                 </div>
               ) : currentStep?.id === 'review' ? (
                 <div className="assessment-review">
+                  {validationErrors.length ? (
+                    <div className="assessment-review__alert" role="alert">
+                      <strong>Please complete required fields before running the assessment.</strong>
+                      <ul>
+                        {Object.entries(errors)
+                          .filter(([, message]) => message)
+                          .map(([fieldName, message]) => (
+                            <li key={fieldName}>{message}</li>
+                          ))}
+                      </ul>
+                    </div>
+                  ) : null}
+
                   <div className="assessment-review__section">
                     <h3>Answered</h3>
                     <div className="assessment-review__list">
-                      {fieldOrder.filter((fieldName) => values[fieldName] !== '' && values[fieldName] !== null && values[fieldName] !== undefined).length ? (
-                        fieldOrder
-                          .filter((fieldName) => values[fieldName] !== '' && values[fieldName] !== null && values[fieldName] !== undefined)
-                          .map((fieldName) => {
-                            const field = getFieldDefinition(fieldName);
-                            return (
-                              <div key={fieldName} className="assessment-review__item">
-                                <strong>{field.label}</strong>
-                                <span>{formatFieldValue(field, values[fieldName])}</span>
-                              </div>
-                            );
-                          })
+                      {answeredFields.length ? (
+                        answeredFields.map((fieldName) => {
+                          const field = getFieldDefinition(fieldName);
+                          return (
+                            <div key={fieldName} className="assessment-review__item">
+                              <strong>{field.label}</strong>
+                              <span>{formatFieldValue(field, values, fieldName)}</span>
+                            </div>
+                          );
+                        })
                       ) : (
                         <p>No answers yet.</p>
                       )}
@@ -200,18 +221,16 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                   <div className="assessment-review__section">
                     <h3>Still blank</h3>
                     <div className="assessment-review__list assessment-review__grid">
-                      {fieldOrder.filter((fieldName) => values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined).length ? (
-                        fieldOrder
-                          .filter((fieldName) => values[fieldName] === '' || values[fieldName] === null || values[fieldName] === undefined)
-                          .map((fieldName) => {
-                            const field = getFieldDefinition(fieldName);
-                            return (
-                              <div key={fieldName} className="assessment-review__item assessment-review__item--muted">
-                                <strong>{field.label}</strong>
-                                <span>{field.required ? 'Required' : 'Optional'}</span>
-                              </div>
-                            );
-                          })
+                      {blankFields.length ? (
+                        blankFields.map((fieldName) => {
+                          const field = getFieldDefinition(fieldName);
+                          return (
+                            <div key={fieldName} className="assessment-review__item assessment-review__item--muted">
+                              <strong>{field.label}</strong>
+                              <span>{field.required ? 'Required' : 'Optional'}</span>
+                            </div>
+                          );
+                        })
                       ) : (
                         <p>All fields are filled in.</p>
                       )}
@@ -231,6 +250,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                         key={field.name}
                         field={field}
                         value={values[field.name]}
+                        values={values}
                         error={errors[field.name]}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -255,7 +275,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                   </PrimaryButton>
                 ) : (
                   <PrimaryButton type="submit" disabled={loading}>
-                    {loading ? 'Checking...' : 'Run CAD Assessment'}
+                    {loading ? 'Checking...' : 'Run Assessment'}
                   </PrimaryButton>
                 )}
               </div>

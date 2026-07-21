@@ -5,7 +5,10 @@ import {
   fieldOrder,
   validateAssessmentValue
 } from '../utils/assessmentConfig';
-import { getAnsweredFieldNames } from '../utils/payload';
+import {
+  getAnsweredFieldNames,
+  isChestPainTriageComplete
+} from '../utils/payload';
 
 export function useAssessmentForm() {
   const [values, setValues] = useState(() => createInitialAssessmentValues());
@@ -45,19 +48,33 @@ export function useAssessmentForm() {
     }));
   }
 
-  function validateAll() {
-    const nextErrors = fieldNames.reduce((accumulator, fieldName) => {
-      const validationError = validateAssessmentValue(fieldName, values[fieldName]);
+  function validateField(fieldName) {
+    if (fieldName === 'cp') {
+      return isChestPainTriageComplete(values) ? '' : 'Please answer all chest pain questions.';
+    }
+
+    return validateAssessmentValue(fieldName, values[fieldName]);
+  }
+
+  function validateFields(names) {
+    const nextErrors = names.reduce((accumulator, fieldName) => {
+      const validationError = validateField(fieldName);
       if (validationError) {
         accumulator[fieldName] = validationError;
       }
       return accumulator;
     }, {});
 
-    setErrors(nextErrors);
-    setTouched(fieldNames.reduce((accumulator, fieldName) => ({ ...accumulator, [fieldName]: true }), {}));
+    setErrors((currentErrors) => ({ ...currentErrors, ...nextErrors }));
+    setTouched((currentTouched) => (
+      names.reduce((accumulator, fieldName) => ({ ...accumulator, [fieldName]: true }), currentTouched)
+    ));
 
     return Object.keys(nextErrors).length === 0;
+  }
+
+  function validateAll() {
+    return validateFields(fieldNames);
   }
 
   function resetForm() {
@@ -91,6 +108,7 @@ export function useAssessmentForm() {
     handleChange,
     handleBlur,
     setFieldValue,
+    validateFields,
     validateAll,
     resetForm,
     getAnsweredCount,

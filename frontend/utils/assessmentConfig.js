@@ -61,7 +61,7 @@ export const assessmentFields = {
     min: 18,
     max: 128,
     step: 1,
-    helper: '(in years)'
+    helper: 'Years'
   },
   sex: {
     name: 'sex',
@@ -69,7 +69,7 @@ export const assessmentFields = {
     kind: 'select',
     required: true,
     options: sexOptions,
-    helper: '(Biological sex at birth)'
+    helper: 'At birth'
   },
   cp: {
     name: 'cp',
@@ -78,7 +78,7 @@ export const assessmentFields = {
     required: true,
     inputType: 'radio',
     options: chestPainTriageQuestions,
-    helper: 'Answer all three questions below to determine your chest pain category.'
+    helper: 'Answer all three questions below.'
   },
   trestbps: {
     name: 'trestbps',
@@ -89,7 +89,7 @@ export const assessmentFields = {
     min: 50,
     max: 250,
     step: 1,
-    helper: '(mmHg, from recent blood test if available)'
+    helper: 'mmHg, if known'
   },
   chol: {
     name: 'chol',
@@ -100,7 +100,7 @@ export const assessmentFields = {
     min: 100,
     max: 700,
     step: 1,
-    helper: '(mg/dL, from recent blood test if available)'
+    helper: 'mg/dL, if known'
   },
   fbs: {
     name: 'fbs',
@@ -108,7 +108,7 @@ export const assessmentFields = {
     kind: 'select',
     required: false,
     options: yesNoOptions,
-    helper: '(Yes if ≥120 mg/dL, no otherwise)'
+    helper: 'Yes if 120 mg/dL or higher'
   },
   restecg: {
     name: 'restecg',
@@ -117,7 +117,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: restingEcgOptions,
-    helper: '(from recent ECG test if available)'
+    helper: 'From ECG report, if available'
   },
   thalach: {
     name: 'thalach',
@@ -128,7 +128,7 @@ export const assessmentFields = {
     min: 60,
     max: 250,
     step: 1,
-    helper: '(bpm, from exercise test if available)'
+    helper: 'bpm, if known'
   },
   exang: {
     name: 'exang',
@@ -136,7 +136,7 @@ export const assessmentFields = {
     kind: 'select',
     required: true,
     options: yesNoOptions,
-    helper: 'Pain, pressure, or tightness that comes on with exercise'
+    helper: 'Pain or tightness during exercise'
   },
   oldpeak: {
     name: 'oldpeak',
@@ -147,7 +147,7 @@ export const assessmentFields = {
     min: 0,
     max: 10,
     step: 0.1,
-    helper: '(mm, from exercise ECG report if available)'
+    helper: 'From exercise ECG, if available'
   },
   slope: {
     name: 'slope',
@@ -156,7 +156,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: slopeOptions,
-    helper: '(from exercise ECG report if available)'
+    helper: 'From exercise ECG, if available'
   },
   ca: {
     name: 'ca',
@@ -165,7 +165,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: caOptions,
-    helper: '(from clinic report if available)'
+    helper: 'From clinic report, if available'
   },
   thal: {
     name: 'thal',
@@ -174,7 +174,7 @@ export const assessmentFields = {
     required: false,
     optionalLabel: 'Not sure / not available',
     options: thalOptions,
-    helper: '(from clinic report if available)'
+    helper: 'From clinic report, if available'
   }
 };
 
@@ -239,10 +239,10 @@ export const assessmentSteps = [
 ];
 
 export const stepFieldMap = {
-  personalInformation: ['age', 'sex'],
+  'personal-information': ['age', 'sex'],
   symptoms: ['cp', 'exang'],
   measurements: ['trestbps', 'chol', 'fbs', 'thalach'],
-  clinicDetails: ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
+  'clinic-details': ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
 };
 
 export const fieldOrder = [

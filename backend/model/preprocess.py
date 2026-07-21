@@ -23,17 +23,44 @@ EXPECTED_FEATURES = [
     'restecg_2.0'
 ]
 
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODELS_DIR = PROJECT_ROOT / 'models'
+EXPORTS_DIR = PROJECT_ROOT / 'exports'
+
+
+def _load_imputer_from_bundle(path: Path):
+    artifacts = joblib.load(path)
+    if isinstance(artifacts, dict):
+        return artifacts.get('imputer'), artifacts.get('features', EXPECTED_FEATURES)
+    return None, EXPECTED_FEATURES
+
 
 def load_artifacts():
-    candidates = [
+    bundle_candidates = [
+        MODELS_DIR / 'production_bundle.pkl',
+        EXPORTS_DIR / 'production_bundle.pkl',
         Path('models/production_bundle.pkl'),
-        Path('../models/production_bundle.pkl')
+        Path('../models/production_bundle.pkl'),
+        Path('../exports/production_bundle.pkl')
     ]
 
-    for candidate in candidates:
+    for candidate in bundle_candidates:
         if candidate.exists():
-            artifacts = joblib.load(candidate)
-            return artifacts.get('imputer'), artifacts.get('features', EXPECTED_FEATURES)
+            imputer, features = _load_imputer_from_bundle(candidate)
+            if imputer is not None:
+                return imputer, features
+
+    imputer_candidates = [
+        MODELS_DIR / 'exported_imputer.pkl',
+        EXPORTS_DIR / 'exported_imputer.pkl',
+        Path('models/exported_imputer.pkl'),
+        Path('../models/exported_imputer.pkl'),
+        Path('../exports/exported_imputer.pkl')
+    ]
+
+    for candidate in imputer_candidates:
+        if candidate.exists():
+            return joblib.load(candidate), EXPECTED_FEATURES
 
     return None, EXPECTED_FEATURES
 
@@ -95,4 +122,3 @@ def preprocess(patient: dict) -> pd.DataFrame:
     df = encode_data(df)
     df = normalize_missing_values(df)
     return predict_clean_imputation(df)
-
