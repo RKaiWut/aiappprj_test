@@ -95,7 +95,12 @@ export async function submitAssessment(values) {
     }
 
     const data = await response.json();
-    return normalizeApiResponse(data);
+    const prediction = normalizeApiResponse(data);
+
+    return {
+        assessment: payload,
+        prediction
+    };
   } catch {
     return buildStubPrediction(payload);
   }

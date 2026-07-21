@@ -180,7 +180,7 @@ export const assessmentFields = {
 
 export const assessmentFieldGroups = [
   {
-    id: 'personal-information',
+    id: 'personalInformation',
     title: 'Personal Information',
     description: 'Basic patient context used by the trained model.',
     fields: ['age', 'sex']
@@ -212,7 +212,7 @@ export const assessmentSteps = [
     description: 'Quick overview before the questions begin.'
   },
   {
-    id: 'personal-information',
+    id: 'personalInformation',
     title: 'Personal Information',
     description: 'Basic patient context used by the trained model.'
   },
@@ -227,7 +227,7 @@ export const assessmentSteps = [
     description: 'Vital signs and core lab measurements.'
   },
   {
-    id: 'clinic-details',
+    id: 'clinicDetails',
     title: 'Clinic Details',
     description: 'Optional report-only details.'
   },

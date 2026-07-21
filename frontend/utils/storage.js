@@ -1,6 +1,6 @@
-const STORAGE_KEY = 'cad-risk-assessment-result';
+const STORAGE_KEY = 'cad-risk-assessment-state';
 
-export function loadStoredResult() {
+export function loadStoredAssessmentState() {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -13,15 +13,15 @@ export function loadStoredResult() {
   }
 }
 
-export function saveStoredResult(result) {
+export function saveStoredAssessmentState(state) {
   if (typeof window === 'undefined') {
     return;
   }
 
-  if (!result) {
+  if (!state) {
     window.sessionStorage.removeItem(STORAGE_KEY);
     return;
   }
 
-  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+  window.sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }

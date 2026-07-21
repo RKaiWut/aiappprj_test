@@ -12,16 +12,24 @@ const emptyResult = {
   lifestyleAdvice: getLifestyleAdvice('Low')
 };
 
-export default function ResultsPage({ result, onRestart, onEditAssessment }) {
-  const displayResult = result ?? emptyResult;
-
+export default function ResultsPage({
+  assessmentState,
+  onRestart,
+  onEditAssessment
+}) {
+  const displayResult =
+    assessmentState?.prediction ?? emptyResult;
   return (
     <div className="page-stack">
       <SectionCard title="Results" description="Placeholder result view for the prototype stage.">
         <div className="results-summary">
           <div className="results-summary__metric">
             <span className="results-summary__label">Risk Probability</span>
-            <strong>{result ? displayResult.riskPercent : formatPercent(displayResult.riskProbability)}</strong>
+            <strong>{
+                assessmentState
+                  ? displayResult.riskPercent
+                  : formatPercent(displayResult.riskProbability)
+              }</strong>
           </div>
           <div className="results-summary__metric">
             <span className="results-summary__label">Risk Level</span>

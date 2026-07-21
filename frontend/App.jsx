@@ -4,7 +4,10 @@ import AssessmentPage from './pages/AssessmentPage';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
 import { submitAssessment } from './services/predictionService';
-import { loadStoredResult, saveStoredResult } from './utils/storage';
+import {
+  loadStoredAssessmentState,
+  saveStoredAssessmentState
+} from './utils/storage';
 
 function getRouteFromHash() {
   const hash = window.location.hash.replace('#', '');
@@ -13,7 +16,9 @@ function getRouteFromHash() {
 
 export default function App() {
   const [route, setRoute] = useState(() => (typeof window === 'undefined' ? 'home' : getRouteFromHash()));
-  const [result, setResult] = useState(() => loadStoredResult());
+  const [assessmentState, setAssessmentState] = useState(() =>
+    loadStoredAssessmentState()
+  );
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -23,8 +28,8 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    saveStoredResult(result);
-  }, [result]);
+    saveStoredAssessmentState(assessmentState);
+  }, [assessmentState]);
 
   function navigate(nextRoute) {
     window.location.hash = nextRoute === 'home' ? '' : nextRoute;
@@ -35,7 +40,11 @@ export default function App() {
     setLoading(true);
     try {
       const response = await submitAssessment(values);
-      setResult(response);
+      setAssessmentState({
+          ...response,
+          sessionId: null
+      });
+
       navigate('results');
     } finally {
       setLoading(false);
@@ -43,7 +52,7 @@ export default function App() {
   }
 
   function handleRestart() {
-    setResult(null);
+    setAssessmentState(null);
     navigate('home');
   }
 
@@ -55,7 +64,7 @@ export default function App() {
     <AppShell currentRoute={route} onNavigate={navigate}>
       {route === 'home' ? <HomePage onStartAssessment={() => navigate('assessment')} /> : null}
       {route === 'assessment' ? <AssessmentPage onSubmitAssessment={handleSubmitAssessment} loading={loading} onCancel={() => navigate('home')} /> : null}
-      {route === 'results' ? <ResultsPage result={result} onRestart={handleRestart} onEditAssessment={handleEditAssessment} /> : null}
+      {route === 'results' ? <ResultsPage assessmentState={assessmentState} onRestart={handleRestart} onEditAssessment={handleEditAssessment} /> : null}
     </AppShell>
   );
 }
