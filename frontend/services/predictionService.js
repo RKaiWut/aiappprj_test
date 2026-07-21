@@ -4,7 +4,15 @@ import { getLifestyleAdvice, getRiskLevel } from '../utils/risk';
 const DEFAULT_API_BASE_URL = 'http://localhost:8000';
 
 function clamp(value, min, max) {
+  if (value === null || value === undefined || Number.isNaN(value)) {
+    return 0;
+  }
+
   return Math.min(max, Math.max(min, value));
+}
+
+function isPresent(value) {
+  return value !== null && value !== undefined && value !== '';
 }
 
 function normalizeApiResponse(data) {
@@ -23,22 +31,22 @@ function normalizeApiResponse(data) {
 function buildStubFactors(payload) {
   const factors = [];
 
-  if (payload.age >= 60) {
+  if (isPresent(payload.age) && payload.age >= 60) {
     factors.push({ feature: 'Age', impact: 0.28, direction: 'increase' });
   }
-  if (payload.chol >= 240) {
+  if (isPresent(payload.chol) && payload.chol >= 240) {
     factors.push({ feature: 'Cholesterol', impact: 0.24, direction: 'increase' });
   }
-  if (payload.trestbps >= 140) {
+  if (isPresent(payload.trestbps) && payload.trestbps >= 140) {
     factors.push({ feature: 'Resting blood pressure', impact: 0.18, direction: 'increase' });
   }
-  if (payload.thalach <= 140) {
+  if (isPresent(payload.thalach) && payload.thalach <= 140) {
     factors.push({ feature: 'Maximum heart rate', impact: 0.16, direction: 'increase' });
   }
   if (payload.exang === 1) {
     factors.push({ feature: 'Exercise induced angina', impact: 0.22, direction: 'increase' });
   }
-  if (payload.oldpeak >= 1.5) {
+  if (isPresent(payload.oldpeak) && payload.oldpeak >= 1.5) {
     factors.push({ feature: 'ST depression', impact: 0.2, direction: 'increase' });
   }
 
@@ -46,13 +54,13 @@ function buildStubFactors(payload) {
 }
 
 export function buildStubPrediction(payload) {
-  const ageScore = clamp((payload.age - 35) / 70, 0, 1) * 0.18;
-  const bpScore = clamp((payload.trestbps - 110) / 90, 0, 1) * 0.16;
-  const cholScore = clamp((payload.chol - 180) / 180, 0, 1) * 0.16;
-  const heartRateScore = payload.thalach < 150 ? clamp((150 - payload.thalach) / 100, 0, 1) * 0.14 : 0;
+  const ageScore = isPresent(payload.age) ? clamp((payload.age - 35) / 70, 0, 1) * 0.18 : 0;
+  const bpScore = isPresent(payload.trestbps) ? clamp((payload.trestbps - 110) / 90, 0, 1) * 0.16 : 0;
+  const cholScore = isPresent(payload.chol) ? clamp((payload.chol - 180) / 180, 0, 1) * 0.16 : 0;
+  const heartRateScore = isPresent(payload.thalach) && payload.thalach < 150 ? clamp((150 - payload.thalach) / 100, 0, 1) * 0.14 : 0;
   const symptomScore = payload.exang === 1 ? 0.12 : 0;
-  const ecgScore = payload.oldpeak >= 1 ? clamp(payload.oldpeak / 5, 0, 1) * 0.16 : 0;
-  const vesselScore = clamp(payload.ca / 4, 0, 1) * 0.12;
+  const ecgScore = isPresent(payload.oldpeak) && payload.oldpeak >= 1 ? clamp(payload.oldpeak / 5, 0, 1) * 0.16 : 0;
+  const vesselScore = isPresent(payload.ca) ? clamp(payload.ca / 4, 0, 1) * 0.12 : 0;
 
   const riskProbability = clamp(0.08 + ageScore + bpScore + cholScore + heartRateScore + symptomScore + ecgScore + vesselScore, 0.05, 0.95);
   const riskLevel = getRiskLevel(riskProbability);

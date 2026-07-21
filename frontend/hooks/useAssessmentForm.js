@@ -5,6 +5,7 @@ import {
   fieldOrder,
   validateAssessmentValue
 } from '../utils/assessmentConfig';
+import { getAnsweredFieldNames } from '../utils/payload';
 
 export function useAssessmentForm() {
   const [values, setValues] = useState(() => createInitialAssessmentValues());
@@ -69,6 +70,14 @@ export function useAssessmentForm() {
     return Boolean(touched[fieldName] && errors[fieldName]);
   }
 
+  function getAnsweredCount() {
+    return getAnsweredFieldNames(values).length;
+  }
+
+  function getAnsweredNames() {
+    return getAnsweredFieldNames(values);
+  }
+
   function getFieldMeta(fieldName) {
     return assessmentFields[fieldName];
   }
@@ -83,6 +92,8 @@ export function useAssessmentForm() {
     handleBlur,
     setFieldValue,
     validateAll,
-    resetForm
+    resetForm,
+    getAnsweredCount,
+    getAnsweredNames
   };
 }

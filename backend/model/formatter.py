@@ -27,6 +27,16 @@ restecg_labels = {
 }
 
 
+def safe_category_label(value, label_map):
+    if value is None:
+        return None
+
+    try:
+        return label_map[int(value)]
+    except (TypeError, ValueError, KeyError):
+        return None
+
+
 # Convert raw prediction into output JSON
 def format_prediction(raw_result, patient, top_n=5, min_impact=0.10):
 
@@ -40,17 +50,21 @@ def format_prediction(raw_result, patient, top_n=5, min_impact=0.10):
 
     # Combine Chest Pain one-hot features
     cp_value = (raw_shap.get("cp_2.0", 0) + raw_shap.get("cp_3.0", 0) + raw_shap.get("cp_4.0", 0))
+    cp_label = safe_category_label(patient.get("cp"), cp_labels)
 
-    combined[
-        f"Chest Pain ({cp_labels[int(patient['cp'])]})"
-        ] = float(cp_value)
+    if cp_label is not None:
+        combined[
+            f"Chest Pain ({cp_label})"
+            ] = float(cp_value)
 
     # Combine Rest ECG one-hot features
     ecg_value = (raw_shap.get("restecg_1.0", 0) + raw_shap.get("restecg_2.0", 0))
+    ecg_label = safe_category_label(patient.get("restecg"), restecg_labels)
 
-    combined[
-        f"Resting ECG ({restecg_labels[int(patient['restecg'])]})"
-    ] = float(ecg_value)
+    if ecg_label is not None:
+        combined[
+            f"Resting ECG ({ecg_label})"
+        ] = float(ecg_value)
 
     # Sort by absolute impact
     factors = sorted(

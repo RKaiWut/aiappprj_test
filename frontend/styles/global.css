@@ -103,6 +103,22 @@ button {
   gap: 18px;
 }
 
+.assessment-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 16px;
+  align-items: start;
+}
+
+.assessment-progress {
+  position: sticky;
+  top: 16px;
+}
+
+.assessment-main {
+  min-width: 0;
+}
+
 .section-card,
 .result-card {
   background: rgba(255, 255, 255, 0.92);
@@ -174,6 +190,133 @@ button {
   gap: 20px;
 }
 
+.stepper {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.stepper-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: 16px;
+  padding: 12px 14px;
+  text-align: left;
+}
+
+.stepper-item--active {
+  border-color: var(--accent);
+  background: rgba(30, 107, 82, 0.08);
+}
+
+.stepper-item--done {
+  background: rgba(30, 107, 82, 0.03);
+}
+
+.stepper-item__index {
+  display: inline-flex;
+  width: 30px;
+  height: 30px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: white;
+  border: 1px solid var(--border);
+  font-weight: 700;
+  flex: 0 0 auto;
+}
+
+.stepper-item__text {
+  display: grid;
+  gap: 2px;
+}
+
+.stepper-item__text strong,
+.stepper-item__text small {
+  display: block;
+}
+
+.stepper-item__text small {
+  color: var(--text-muted);
+}
+
+.assessment-intro,
+.assessment-review {
+  display: grid;
+  gap: 12px;
+}
+
+.assessment-intro ul {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.assessment-review__section {
+  display: grid;
+  gap: 10px;
+}
+
+.assessment-review__section h3 {
+  margin: 0;
+}
+
+.assessment-review__list {
+  display: grid;
+  gap: 8px;
+}
+
+.assessment-review__item {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+  display: grid;
+  gap: 4px;
+}
+
+.assessment-review__item--muted {
+  opacity: 0.85;
+}
+
+.progress-metric {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+}
+
+.progress-metric strong {
+  font-size: 1.5rem;
+}
+
+.progress-list {
+  display: grid;
+  gap: 6px;
+}
+
+.progress-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+
+.progress-item--done {
+  color: var(--text);
+  background: rgba(30, 107, 82, 0.06);
+}
+
 .assessment-group {
   display: grid;
   gap: 14px;
@@ -204,6 +347,17 @@ button {
 
 .form-field__label {
   font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: baseline;
+}
+
+.form-field__required,
+.form-field__optional {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 
 .form-field input,
@@ -296,12 +450,17 @@ button {
   .app-header,
   .results-summary,
   .results-layout,
-  .assessment-grid {
+  .assessment-grid,
+  .assessment-layout {
     grid-template-columns: 1fr;
   }
 
   .app-header {
     align-items: start;
     flex-direction: column;
+  }
+
+  .assessment-progress {
+    position: static;
   }
 }

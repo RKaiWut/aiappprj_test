@@ -55,12 +55,15 @@ def predict_clean_imputation(production_df: pd.DataFrame) -> pd.DataFrame:
 
 def clean_data(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    df = df.replace('?', np.nan)
+    df = df.replace(['?', ''], np.nan)
+
+    for column in df.columns:
+        df[column] = pd.to_numeric(df[column], errors='coerce')
 
     if 'chol' in df.columns:
         df['chol'] = df['chol'].replace(0, np.nan)
 
-    return df.astype(float)
+    return df
 
 
 def encode_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -82,9 +85,14 @@ def encode_data(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
+def normalize_missing_values(df: pd.DataFrame) -> pd.DataFrame:
+    return df.replace([np.inf, -np.inf], np.nan)
+
+
 def preprocess(patient: dict) -> pd.DataFrame:
     df = pd.DataFrame([patient])
     df = clean_data(df)
     df = encode_data(df)
+    df = normalize_missing_values(df)
     return predict_clean_imputation(df)
 

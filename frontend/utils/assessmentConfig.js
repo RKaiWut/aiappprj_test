@@ -4,10 +4,10 @@ export const sexOptions = [
 ];
 
 export const chestPainOptions = [
-  { label: 'Typical angina', value: 1 },
-  { label: 'Atypical angina', value: 2 },
-  { label: 'Non-anginal pain', value: 3 },
-  { label: 'Asymptomatic', value: 4 }
+  { label: 'Chest pain; Usually brief; After emotional or physical stress (typical angina)', value: 1 },
+  { label: 'Chest pain or near chest; Sharp and random (atypical angina)', value: 2 },
+  { label: 'Pain or discomfort not necessarily near chest (non-anginal pain)', value: 3 },
+  { label: 'No chest pain (asymptomatic)', value: 4 }
 ];
 
 export const yesNoOptions = [
@@ -47,111 +47,128 @@ export const assessmentFields = {
     label: 'Age',
     kind: 'number',
     inputType: 'number',
+    required: true,
     min: 18,
-    max: 100,
+    max: 128,
     step: 1,
-    helper: 'Age in years.',
+    helper: '(in years).',
     placeholder: 'e.g. 54'
   },
   sex: {
     name: 'sex',
-    label: 'Sex',
+    label: 'Biological Sex',
     kind: 'select',
+    required: true,
     options: sexOptions,
-    helper: 'Recorded biological sex used by the trained model.'
+    helper: '(Biological sex at birth)'
   },
   cp: {
     name: 'cp',
-    label: 'Chest Pain Type',
+    label: 'Chest pain',
     kind: 'select',
+    required: true,
     options: chestPainOptions,
-    helper: 'Select the closest category from the clinical description.'
+    helper: 'Choose the closest match.'
   },
   trestbps: {
     name: 'trestbps',
-    label: 'Resting Blood Pressure',
+    label: 'Resting blood pressure',
     kind: 'number',
     inputType: 'number',
+    required: false,
     min: 50,
     max: 250,
     step: 1,
-    helper: 'Resting systolic blood pressure in mmHg.',
-    placeholder: 'e.g. 130'
+    helper: 'From a recent blood test, if available. (trestbps)',
+    placeholder: 'Leave blank if unknown'
   },
   chol: {
     name: 'chol',
     label: 'Cholesterol',
     kind: 'number',
     inputType: 'number',
+    required: false,
     min: 100,
     max: 700,
     step: 1,
-    helper: 'Serum cholesterol in mg/dL.',
-    placeholder: 'e.g. 230'
+    helper: 'From a recent blood test, if available.',
+    placeholder: 'Leave blank if unknown'
   },
   fbs: {
     name: 'fbs',
-    label: 'Fasting Blood Sugar',
+    label: 'High fasting blood sugar',
     kind: 'select',
+    required: false,
     options: yesNoOptions,
-    helper: 'Whether fasting blood sugar is above 120 mg/dL.'
+    helper: 'From a recent blood test, if available. Yes if greater or equal to 120 mg/dL, no otherwise.'
   },
   restecg: {
     name: 'restecg',
-    label: 'Rest ECG',
+    label: 'Resting ECG',
     kind: 'select',
+    required: false,
+    optionalLabel: 'Not sure / not available',
     options: restingEcgOptions,
-    helper: 'Resting electrocardiogram result.'
+    helper: 'From a recent ECG test, if available.'
   },
   thalach: {
     name: 'thalach',
-    label: 'Maximum Heart Rate',
+    label: 'Highest heart rate during exercise',
     kind: 'number',
     inputType: 'number',
+    required: false,
     min: 60,
     max: 250,
     step: 1,
-    helper: 'Highest heart rate reached during exercise.',
-    placeholder: 'e.g. 150'
+    helper: 'From an exercise test, if you have it.',
+    placeholder: 'Leave blank if unknown'
   },
   exang: {
     name: 'exang',
-    label: 'Exercise Induced Angina',
+    label: 'Chest pain during exercise',
     kind: 'select',
+    required: true,
     options: yesNoOptions,
-    helper: 'Chest pain triggered by exercise.'
+    helper: 'Pain, pressure, or tightness that comes on with exercise.'
   },
   oldpeak: {
     name: 'oldpeak',
-    label: 'ST Depression (Oldpeak)',
+    label: 'ST depression (oldpeak)',
     kind: 'number',
     inputType: 'number',
+    required: false,
     min: 0,
     max: 10,
     step: 0.1,
-    helper: 'ST depression induced by exercise relative to rest.',
-    placeholder: 'e.g. 1.2'
+    helper: 'Use only if a clinic report shows this value.',
+    placeholder: 'Leave blank if unknown'
   },
   slope: {
     name: 'slope',
     label: 'ST Slope',
     kind: 'select',
+    required: false,
+    optionalLabel: 'Not sure / not available',
     options: slopeOptions,
-    helper: 'Shape of the peak exercise ST segment.'
+    helper: 'Only if you have the exercise ECG result.'
   },
   ca: {
     name: 'ca',
     label: 'Number of Major Vessels',
     kind: 'select',
+    required: false,
+    optionalLabel: 'Not sure / not available',
     options: caOptions,
-    helper: 'Count of major vessels colored by fluoroscopy.'
+    helper: 'Only if you have a clinic report for this.'
   },
   thal: {
     name: 'thal',
     label: 'Thalassemia',
     kind: 'select',
+    required: false,
+    optionalLabel: 'Not sure / not available',
     options: thalOptions,
-    helper: 'Thalassemia test category used during training.'
+    helper: 'Only if this appears on your report.'
   }
 };
 
@@ -181,6 +198,46 @@ export const assessmentFieldGroups = [
     fields: ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
   }
 ];
+
+export const assessmentSteps = [
+  {
+    id: 'intro',
+    title: 'Start',
+    description: 'Quick overview before the questions begin.'
+  },
+  {
+    id: 'basics',
+    title: 'Basics',
+    description: 'Simple background details.'
+  },
+  {
+    id: 'symptoms',
+    title: 'Symptoms',
+    description: 'What you feel during activity.'
+  },
+  {
+    id: 'measurements',
+    title: 'Measurements',
+    description: 'Only fill these in if you know them.'
+  },
+  {
+    id: 'clinic-details',
+    title: 'Clinic details',
+    description: 'Optional report-only details.'
+  },
+  {
+    id: 'review',
+    title: 'Review',
+    description: 'Check what you answered before submitting.'
+  }
+];
+
+export const stepFieldMap = {
+  basics: ['age', 'sex'],
+  symptoms: ['cp', 'exang'],
+  measurements: ['trestbps', 'chol', 'fbs', 'thalach'],
+  'clinic-details': ['restecg', 'oldpeak', 'slope', 'ca', 'thal']
+};
 
 export const fieldOrder = [
   'age',
@@ -217,6 +274,9 @@ export function validateAssessmentValue(fieldName, value) {
   }
 
   if (value === '' || value === null || value === undefined) {
+    if (!field.required) {
+      return '';
+    }
     return `${field.label} is required.`;
   }
 
