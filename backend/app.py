@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from .services.genai_service import test_msg
 
 from .routes.predict import router as predict_router
 
@@ -18,3 +19,8 @@ app.add_middleware(
 )
 
 app.include_router(predict_router, prefix='/api', tags=['prediction'])
+
+@app.get("/chatbot")
+def chatbot():
+    result = test_msg()
+    return {"result": result}
