@@ -59,22 +59,22 @@ export function buildAssessmentPayload(values) {
 
   for (const fieldName of fieldOrder) {
     if (fieldName === 'cp') {
-      // Chest pain classification
-      switch (values.cpAssessment) {
-        case 'manual':
+      if (values.cpMode === 'manual') {
+        payload.cp = Number(values.cpManual);
+      } else if (values.cpPresent === '0') {
+        payload.cp = 4;
+      } else {
+        if (values.cpAssessment === 'manual') {
           payload.cp = Number(values.cpManual);
-          break;
-
-        case 'none':
+        }
+        else if (values.cpAssessment === 'none') {
           payload.cp = 4;
-          break;
-
-        case 'guided':
-        default:
+        }
+        else {
           payload.cp = chestPainAnswersToValue(
             getChestPainTriageAnswers(values)
           );
-          break;
+        }
       }
     } else {
       payload[fieldName] = toNumber(values[fieldName]);

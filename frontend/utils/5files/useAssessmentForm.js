@@ -54,24 +54,20 @@ export function useAssessmentForm(initialValues = null) {
 
   function validateField(fieldName) {
 
-    // Chest pain triage only matters in Guided mode
-    if (fieldName === 'cp') {
-      if (values.cpAssessment !== 'guided') {
-        return '';
-      }
+    // Ignore hidden chest pain fields
+    if (fieldName === 'cpManual' && values.cpAssessment !== 'manual') {
+      return '';
+    }
 
+    if (fieldName === 'cp' && values.cpAssessment !== 'guided') {
+      return '';
+    }
+
+    // Chest pain triage has custom validation
+    if (fieldName === 'cp') {
       return isChestPainTriageComplete(values)
         ? ''
         : 'Please answer all chest pain questions.';
-    }
-
-    // Manual classification is only required in Manual mode
-    if (fieldName === 'cpManual') {
-      if (values.cpAssessment !== 'manual') {
-        return '';
-      }
-
-      return validateAssessmentValue(fieldName, values[fieldName]);
     }
 
     return validateAssessmentValue(fieldName, values[fieldName]);

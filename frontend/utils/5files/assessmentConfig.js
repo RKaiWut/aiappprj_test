@@ -72,37 +72,34 @@ export const assessmentFields = {
     helper: '(Biological sex at birth)'
   },
   cpAssessment: {
-    name: 'cpAssessment',
     label: 'Chest pain assessment',
-    kind: 'select',
-    inputType: 'radio',
+    kind: 'radio',
     required: true,
     options: [
       {
-        label: 'I am currently experiencing chest pain',
-        value: 'guided'
+        value: 'guided',
+        label: 'I am currently experiencing chest pain'
       },
       {
-        label: 'I am NOT experiencing chest pain',
-        value: 'none'
+        value: 'none',
+        label: 'I am NOT experiencing chest pain'
       },
       {
-        label: 'I already know my chest pain classification (Advanced)',
-        value: 'manual'
+        value: 'manual',
+        label: 'I already know my chest pain classification (Advanced)'
       }
     ]
   },
 
   cpManual: {
-    name: 'cpManual',
     label: 'Chest pain classification',
     kind: 'select',
     required: true,
     options: [
-      { label: 'Typical angina', value: 1 },
-      { label: 'Atypical angina', value: 2 },
-      { label: 'Non-anginal pain', value: 3 },
-      { label: 'No chest pain', value: 4 }
+      { value: '1', label: 'Typical angina (1)' },
+      { value: '2', label: 'Atypical angina (2)' },
+      { value: '3', label: 'Non-anginal pain (3)' },
+      { value: '4', label: 'No chest pain (4)' }
     ]
   },
   cp: {

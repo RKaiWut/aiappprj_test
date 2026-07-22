@@ -5,6 +5,60 @@ export default function FormField({ field, value, values, error, onChange, onBlu
     ? field.helper
     : `${field.helper} Leave blank if unknown.`;
 
+  // Chest pain conditional fields
+  if (field.name === 'cpPresent' && values.cpMode === 'manual') {
+    return null;
+  }
+
+  if (field.name === 'cpManual' && values.cpMode !== 'manual') {
+    return null;
+  }
+
+  if (field.name === 'cp') {
+    if (values.cpMode === 'manual') {
+      return null;
+    }
+
+    if (values.cpPresent === '0') {
+      return null;
+    }
+  }
+
+  // Generic radio button group
+  if (field.kind === 'radio') {
+    return (
+      <div className="form-field">
+        <div className="form-field__header">
+          <label htmlFor={field.name}>{field.label}</label>
+          {field.required ? <span className="form-field__required">Required</span> : null}
+        </div>
+
+        <div className="radio-group">
+          {field.options.map((option) => (
+            <label key={option.value} className="radio-option">
+              <input
+                type="radio"
+                name={field.name}
+                value={option.value}
+                checked={String(value ?? '') === String(option.value)}
+                onChange={(event) => onChange(field.name, event.target.value)}
+                onBlur={() => onBlur(field.name)}
+              />
+              <span>{option.label}</span>
+            </label>
+          ))}
+        </div>
+
+        {field.helpText ? (
+          <p className="form-field__hint">{field.helpText}</p>
+        ) : null}
+
+        {error ? (
+          <p className="form-field__error">{error}</p>
+        ) : null}
+      </div>
+    );
+  }
   return (
     <label className={`form-field${field.kind === 'triage' ? ' form-field--wide' : ''}`} htmlFor={id}>
       {showHelperAbove ? (
@@ -30,12 +84,9 @@ export default function FormField({ field, value, values, error, onChange, onBlu
                   <label key={option.value} className="radio-option">
                     <input
                       type="radio"
-                      name={`${field.name}-${question.id}`}
+                      name={field.name}
                       value={option.value}
-                      checked={
-                        String(values[`cp-${question.id}`] ?? '') ===
-                        String(option.value)
-                      }
+                      checked={String(value ?? '') === String(option.value)}
                       onChange={onChange}
                       onBlur={onBlur}
                     />

@@ -229,3 +229,7 @@ out/
 *.data
 last_prompt.txt
 /exports
+frontend/utils/5files/5files.zip
+/exports
+exports/~$heart_disease_raw_with_predictions.xlsx
+exports/heart_disease_raw_with_predictions.xlsx

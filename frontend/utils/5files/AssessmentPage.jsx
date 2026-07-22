@@ -18,22 +18,6 @@ import { useMemo, useState } from 'react';
 
 function formatFieldValue(field, values, fieldName) {
   if (fieldName === 'cp') {
-
-    if (values.cpAssessment === 'none') {
-      return 'No chest pain';
-    }
-
-    if (values.cpAssessment === 'manual') {
-      const manual = getFieldDefinition('cpManual');
-
-      const option = manual.options.find(
-        (entry) => String(entry.value) === String(values.cpManual)
-      );
-
-      return option ? option.label : 'Not provided';
-    }
-
-    // Existing guided questionnaire logic continues below...
     const answers = getChestPainTriageAnswers(values);
     if (!Object.keys(answers).length) {
       return 'Not provided';
@@ -171,17 +155,16 @@ export default function AssessmentPage({
   const answeredFields = fieldOrder.filter((fieldName) => isFieldAnswered(fieldName, values));
   const blankFields = fieldOrder.filter((fieldName) => !isFieldAnswered(fieldName, values));
   const visibleFields = currentFields.filter((field) => {
-    // Hide manual selector unless Advanced mode is chosen
-    if (field.name === 'cpManual') {
-      return values.cpAssessment === 'manual';
-    }
+    switch (field.name) {
+      case 'cpManual':
+        return values.cpAssessment === 'manual';
 
-    // Hide guided triage unless "Currently experiencing chest pain" is chosen
-    if (field.name === 'cp') {
-      return values.cpAssessment === 'guided';
-    }
+      case 'cp':
+        return values.cpAssessment === 'guided';
 
-    return true;
+      default:
+        return true;
+    }
   });
   return (
     <div className="page-stack">
