@@ -1,34 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
+
 import PrimaryButton from '../components/PrimaryButton';
 import SectionCard from '../components/SectionCard';
-import { createChatSession, sendChatMessage } from '../services/chatService';
+import ChatWindow from '../components/ChatWindow';
+import '../styles/chatbot.css';
+
+import {
+    createChatSession,
+    sendChatMessage
+} from '../services/chatService';
 
 export default function ChatPage({
     assessmentState,
     setAssessmentState,
+    chatMessages,
+    setChatMessages,
     onBack
 }) {
     const [status, setStatus] = useState('Preparing chat...');
-    const [messages, setMessages] = useState([
-        {
-            role: 'assistant',
-            content:
-                "Hello! I'm your CAD lifestyle assistant. Feel free to ask me about your assessment results or heart-healthy lifestyle recommendations."
-        }
-    ]);
-
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
-    const [sessionId, setSessionId] = useState(
-        assessmentState?.sessionId ?? null
-    );
+    const inputRef = useRef(null);
     const messagesEndRef = useRef(null);
+
+    const prediction = assessmentState?.prediction;
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({
             behavior: 'smooth'
         });
-    }, [messages]);
+    }, [chatMessages, loading]);
 
     useEffect(() => {
         async function initializeChat() {
@@ -37,6 +38,33 @@ export default function ChatPage({
                 return;
             }
 
+            // Create greeting only once
+            if (chatMessages.length === 0) {
+                setChatMessages([
+                    {
+                        role: 'assistant',
+                        content:
+                            `# Welcome!
+
+I've reviewed your CAD screening assessment.
+
+**Risk Level:** ${prediction.riskLevel}
+
+**Estimated Risk:** ${prediction.riskPercent}
+
+You can ask me about:
+
+- Your assessment results
+- Medical terminology
+- Lifestyle recommendations
+- Coronary artery disease (CAD)
+
+How can I help you today?`
+                    }
+                ]);
+            }
+
+            // Existing session
             if (assessmentState.sessionId) {
                 setStatus('Chat ready.');
                 return;
@@ -45,10 +73,8 @@ export default function ChatPage({
             try {
                 const sessionId = await createChatSession(
                     assessmentState.assessment,
-                    assessmentState.prediction.backendPrediction
+                    prediction.backendPrediction
                 );
-
-                setSessionId(sessionId);
 
                 setAssessmentState({
                     ...assessmentState,
@@ -63,6 +89,7 @@ export default function ChatPage({
         }
 
         initializeChat();
+        inputRef.current?.focus();
     }, []);
 
     async function handleSend() {
@@ -72,7 +99,7 @@ export default function ChatPage({
             return;
         }
 
-        setMessages((previous) => [
+        setChatMessages(previous => [
             ...previous,
             {
                 role: 'user',
@@ -84,14 +111,12 @@ export default function ChatPage({
         setLoading(true);
 
         try {
-            console.log('Current assessmentState:', assessmentState);
-            console.log('Current sessionId:', assessmentState.sessionId);
             const reply = await sendChatMessage(
-                sessionId,
+                assessmentState.sessionId,
                 message
             );
 
-            setMessages((previous) => [
+            setChatMessages(previous => [
                 ...previous,
                 {
                     role: 'assistant',
@@ -100,14 +125,13 @@ export default function ChatPage({
             ]);
         } catch (error) {
             console.error(error);
-            console.log(assessmentState.prediction);
 
-            setMessages((previous) => [
+            setChatMessages(previous => [
                 ...previous,
                 {
                     role: 'assistant',
                     content:
-                        'Sorry, something went wrong while contacting the AI service.'
+                        'Sorry, something went wrong while contacting the AI assistant.'
                 }
             ]);
         } finally {
@@ -116,68 +140,85 @@ export default function ChatPage({
     }
 
     function handleKeyDown(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
+        if (
+            event.key === 'Enter' &&
+            !event.shiftKey &&
+            !loading
+        ) {
             event.preventDefault();
             handleSend();
         }
     }
 
     return (
-        <SectionCard
-            title="AI Health Chatbot"
-            description={status}
-        >
-            <div className="chat-messages">
+        <div className="page-stack">
 
-                {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={`chat-message chat-message--${message.role}`}
-                    >
+            <SectionCard
+                title="AI Health Chatbot"
+                description={status}
+            >
+
+                <div className="chat-summary">
+
+                    <div>
+                        <span className="results-summary__label">
+                            Risk Level
+                        </span>
+
                         <strong>
-                            {message.role === 'assistant' ? 'AI' : 'You'}
+                            {prediction.riskLevel}
                         </strong>
-
-                        <p>{message.content}</p>
                     </div>
-                ))}
 
-                {loading && (
-                    <div className="chat-message chat-message--assistant">
-                        <strong>AI</strong>
-                        <p>Typing...</p>
+                    <div>
+                        <span className="results-summary__label">
+                            Estimated Risk
+                        </span>
+
+                        <strong>
+                            {prediction.riskPercent}
+                        </strong>
                     </div>
-                )}
 
-                <div ref={messagesEndRef} />
+                </div>
 
-            </div>
+                <ChatWindow
+                    messages={chatMessages}
+                    loading={loading}
+                    messagesEndRef={messagesEndRef}
+                />
 
-            <textarea
-                rows={3}
-                value={input}
-                placeholder="Ask about your assessment or heart health..."
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={handleKeyDown}
-            />
+                <textarea
+                    className="chat-input"
+                    rows={3}
+                    placeholder="Ask about your assessment or heart health..."
+                    value={input}
+                    onChange={(event) => setInput(event.target.value)}
+                    onKeyDown={handleKeyDown}
+                    ref={inputRef}
+                />
 
-            <div className="form-actions">
+                <div className="form-actions">
 
-                <PrimaryButton
-                    variant="ghost"
-                    onClick={onBack}
-                >
-                    Back
-                </PrimaryButton>
+                    <PrimaryButton
+                        variant="ghost"
+                        onClick={onBack}
+                        disabled={loading}
+                    >
+                        Back
+                    </PrimaryButton>
 
-                <PrimaryButton
-                    onClick={handleSend}
-                    disabled={loading || !input.trim()}
-                >
-                    Send
-                </PrimaryButton>
+                    <PrimaryButton
+                        onClick={handleSend}
+                        disabled={loading || !input.trim()}
+                    >
+                        {loading ? 'Thinking...' : 'Send'}
+                    </PrimaryButton>
 
-            </div>
-        </SectionCard>
+                </div>
+
+            </SectionCard>
+
+        </div>
     );
 }

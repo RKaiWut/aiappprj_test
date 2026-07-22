@@ -13,8 +13,8 @@ import {
 function getRouteFromHash() {
   const hash = window.location.hash.replace('#', '');
   return ['assessment', 'results', 'chat'].includes(hash)
-  ? hash
-  : 'home';
+    ? hash
+    : 'home';
 }
 
 export default function App() {
@@ -22,6 +22,7 @@ export default function App() {
   const [assessmentState, setAssessmentState] = useState(() =>
     loadStoredAssessmentState()
   );
+  const [chatMessages, setChatMessages] = useState([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -44,8 +45,8 @@ export default function App() {
     try {
       const response = await submitAssessment(values);
       setAssessmentState({
-          ...response,
-          sessionId: null
+        ...response,
+        sessionId: null
       });
 
       navigate('results');
@@ -56,6 +57,7 @@ export default function App() {
 
   function handleRestart() {
     setAssessmentState(null);
+    setChatMessages([]);
     navigate('home');
   }
 
@@ -68,7 +70,13 @@ export default function App() {
       {route === 'home' ? <HomePage onStartAssessment={() => navigate('assessment')} /> : null}
       {route === 'assessment' ? <AssessmentPage onSubmitAssessment={handleSubmitAssessment} loading={loading} onCancel={() => navigate('home')} /> : null}
       {route === 'results' ? <ResultsPage assessmentState={assessmentState} onRestart={handleRestart} onEditAssessment={handleEditAssessment} onOpenChat={() => navigate('chat')} /> : null}
-      {route === 'chat' ? (<ChatPage assessmentState={assessmentState} setAssessmentState={setAssessmentState} onBack={() => navigate('results')} />) : null}
+      {route === 'chat' ? (<ChatPage
+        assessmentState={assessmentState}
+        setAssessmentState={setAssessmentState}
+        chatMessages={chatMessages}
+        setChatMessages={setChatMessages}
+        onBack={() => navigate('results')}
+      />) : null}
     </AppShell>
   );
 }

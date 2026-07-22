@@ -18,5 +18,6 @@ app.add_middleware(
     allow_headers=['*']
 )
 
+
 app.include_router(predict_router, prefix='/api', tags=['prediction'])
 app.include_router(chatbot_router, prefix='/api', tags=['chat'])
