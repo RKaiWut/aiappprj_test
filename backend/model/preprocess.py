@@ -22,52 +22,32 @@ EXPECTED_FEATURES = [
     'restecg_1.0',
     'restecg_2.0'
 ]
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-MODELS_DIR = PROJECT_ROOT / 'models'
-EXPORTS_DIR = PROJECT_ROOT / 'exports'
+MODELS_DIR = PROJECT_ROOT / "models"
+IMPUTER_PATH = MODELS_DIR / "imputation_bundle.pkl"
 
 
 def _load_imputer_from_bundle(path: Path):
+    if not path.exists():
+        raise FileNotFoundError(f"Imputer bundle not found at target location: {path}")
+
     artifacts = joblib.load(path)
     if isinstance(artifacts, dict):
-        return artifacts.get('imputer'), artifacts.get('features', EXPECTED_FEATURES)
+        return artifacts.get("imputer"), artifacts.get("features", EXPECTED_FEATURES)
+    
     return None, EXPECTED_FEATURES
 
 
 def load_artifacts():
-    bundle_candidates = [
-        MODELS_DIR / 'production_bundle.pkl',
-        EXPORTS_DIR / 'production_bundle.pkl',
-        Path('models/production_bundle.pkl'),
-        Path('../models/production_bundle.pkl'),
-        Path('../exports/production_bundle.pkl')
-    ]
-
-    for candidate in bundle_candidates:
-        if candidate.exists():
-            imputer, features = _load_imputer_from_bundle(candidate)
-            if imputer is not None:
-                return imputer, features
-
-    imputer_candidates = [
-        MODELS_DIR / 'exported_imputer.pkl',
-        EXPORTS_DIR / 'exported_imputer.pkl',
-        Path('models/exported_imputer.pkl'),
-        Path('../models/exported_imputer.pkl'),
-        Path('../exports/exported_imputer.pkl')
-    ]
-
-    for candidate in imputer_candidates:
-        if candidate.exists():
-            return joblib.load(candidate), EXPECTED_FEATURES
-
-    return None, EXPECTED_FEATURES
+    imputer, features = _load_imputer_from_bundle(IMPUTER_PATH)
+    if imputer is None:
+        raise ValueError(f"Could not extract 'imputer' key from bundle at {IMPUTER_PATH}")
+    
+    return imputer, features
 
 
 loaded_imputer, expected_features = load_artifacts()
-
-
+print(expected_features)
 def predict_clean_imputation(production_df: pd.DataFrame) -> pd.DataFrame:
     df_aligned = production_df.reindex(columns=expected_features)
     df_aligned = df_aligned.astype(float)

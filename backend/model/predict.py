@@ -10,23 +10,19 @@ from .preprocess import preprocess
 predicted = [0.0785534, 0.14662599, 0.2488242, 0.34694082, 0.44643557, 0.54862061, 0.65373713, 0.74864547, 0.85772489, 0.92538421]
 actual    = [0.04347826, 0.08247423, 0.3015873, 0.34782609, 0.41463415, 0.52083333, 0.68181818, 0.77777778, 0.88636364, 0.9379845]
 
+# Resolve project root relative to this file's location
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+MODELS_DIR = PROJECT_ROOT / "models"
+MODEL_PATH = MODELS_DIR / "exported_model2.ubj"
+
+
 def load_model() -> xgb.XGBClassifier:
+    if not MODEL_PATH.exists():
+        raise FileNotFoundError(f"Model file not found at target location: {MODEL_PATH}")
+
     model = xgb.XGBClassifier()
-
-    candidate_paths = [
-        Path(__file__).resolve().parents[2] / 'models' / 'exported_model2.ubj',
-        Path(__file__).resolve().parents[1] / 'exported_model2.ubj',
-        Path(__file__).resolve().parents[2] / 'models' / 'exported_model.ubj'
-    ]
-
-    for candidate in candidate_paths:
-        if candidate.exists():
-            model.load_model(str(candidate))
-            return model
-
-    searched_paths = '\n'.join(str(path) for path in candidate_paths)
-    raise FileNotFoundError(f'Could not find an XGBoost model file. Searched:\n{searched_paths}')
-
+    model.load_model(MODEL_PATH)
+    return model
 
 # 1.1 Load model
 model = load_model()
