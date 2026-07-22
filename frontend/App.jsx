@@ -22,8 +22,14 @@ export default function App() {
   const [assessmentState, setAssessmentState] = useState(() =>
     loadStoredAssessmentState()
   );
+
+  // Stores chat messages
   const [chatMessages, setChatMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // Verify if user has done an assessment, blocks access to Results & Chatbot otherwise.
+  const hasAssessment = Boolean(assessmentState?.assessment);
+  const hasPrediction = Boolean(assessmentState?.prediction);
 
   useEffect(() => {
     const handleHashChange = () => setRoute(getRouteFromHash());
@@ -40,6 +46,7 @@ export default function App() {
     setRoute(nextRoute);
   }
 
+  // Submit assessment
   async function handleSubmitAssessment(values) {
     setLoading(true);
     try {
@@ -55,6 +62,7 @@ export default function App() {
     }
   }
 
+  // Clear assessmnet if restarted
   function handleRestart() {
     setAssessmentState(null);
     setChatMessages([]);
@@ -65,18 +73,57 @@ export default function App() {
     navigate('assessment');
   }
 
+  // Navigation pages & loading
   return (
-    <AppShell currentRoute={route} onNavigate={navigate}>
-      {route === 'home' ? <HomePage onStartAssessment={() => navigate('assessment')} /> : null}
-      {route === 'assessment' ? <AssessmentPage onSubmitAssessment={handleSubmitAssessment} loading={loading} onCancel={() => navigate('home')} /> : null}
-      {route === 'results' ? <ResultsPage assessmentState={assessmentState} onRestart={handleRestart} onEditAssessment={handleEditAssessment} onOpenChat={() => navigate('chat')} /> : null}
-      {route === 'chat' ? (<ChatPage
-        assessmentState={assessmentState}
-        setAssessmentState={setAssessmentState}
-        chatMessages={chatMessages}
-        setChatMessages={setChatMessages}
-        onBack={() => navigate('results')}
-      />) : null}
+    <AppShell
+      currentRoute={route}
+      onNavigate={navigate}
+      hasPrediction={hasPrediction}
+    >
+      {route === 'home' && (
+        <HomePage
+          onStartAssessment={() => navigate('assessment')}
+        />
+      )}
+
+      {route === 'assessment' && (
+        <AssessmentPage
+          onSubmitAssessment={handleSubmitAssessment}
+          loading={loading}
+          onCancel={() => navigate('home')}
+        />
+      )}
+
+      {route === 'results' && hasPrediction && (
+        <ResultsPage
+          assessmentState={assessmentState}
+          onRestart={handleRestart}
+          onEditAssessment={handleEditAssessment}
+          onOpenChat={() => navigate('chat')}
+        />
+      )}
+
+      {route === 'chat' && hasAssessment && hasPrediction && (
+        <ChatPage
+          assessmentState={assessmentState}
+          setAssessmentState={setAssessmentState}
+          chatMessages={chatMessages}
+          setChatMessages={setChatMessages}
+          onBack={() => navigate('results')}
+        />
+      )}
+
+      {route === 'results' && !hasPrediction && (
+        <HomePage
+          onStartAssessment={() => navigate('assessment')}
+        />
+      )}
+
+      {route === 'chat' && (!hasAssessment || !hasPrediction) && (
+        <HomePage
+          onStartAssessment={() => navigate('assessment')}
+        />
+      )}
     </AppShell>
   );
 }

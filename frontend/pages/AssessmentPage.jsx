@@ -42,7 +42,7 @@ function formatFieldValue(field, values, fieldName) {
     const option = field.options.find((entry) => String(entry.value) === String(value));
     return option ? option.label : String(value);
   }
-
+  
   return String(value);
 }
 

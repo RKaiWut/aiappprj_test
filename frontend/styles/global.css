@@ -94,6 +94,11 @@ button {
   color: white;
 }
 
+.nav-link:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 .app-main {
   margin-top: 24px;
 }

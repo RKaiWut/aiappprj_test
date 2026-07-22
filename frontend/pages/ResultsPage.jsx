@@ -27,10 +27,10 @@ export default function ResultsPage({
           <div className="results-summary__metric">
             <span className="results-summary__label">Risk Probability</span>
             <strong>{
-                assessmentState
-                  ? displayResult.riskPercent
-                  : formatPercent(displayResult.riskProbability)
-              }</strong>
+              assessmentState
+                ? displayResult.riskPercent
+                : formatPercent(displayResult.riskProbability)
+            }</strong>
           </div>
           <div className="results-summary__metric">
             <span className="results-summary__label">Risk Level</span>
@@ -79,6 +79,7 @@ export default function ResultsPage({
           <PrimaryButton
             type="button"
             onClick={onOpenChat}
+            disabled={!assessmentState?.prediction}
           >
             Open AI Chat
           </PrimaryButton>

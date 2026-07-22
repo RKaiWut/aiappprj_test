@@ -25,6 +25,29 @@ export default function ChatPage({
 
     const prediction = assessmentState?.prediction;
 
+    // Prevent usage if no assessment done.
+    if (!assessmentState || !prediction) {
+        return (
+            <div className="page-stack">
+                <SectionCard
+                    title="AI Health Chatbot"
+                    description="No assessment found."
+                >
+                    <p>
+                        Please complete a CAD risk assessment before using the AI
+                        chatbot.
+                    </p>
+
+                    <div className="form-actions">
+                        <PrimaryButton onClick={onBack}>
+                            Back
+                        </PrimaryButton>
+                    </div>
+                </SectionCard>
+            </div>
+        );
+    }
+
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({
             behavior: 'smooth'

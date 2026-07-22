@@ -1,4 +1,9 @@
-export default function AppShell({ children, currentRoute, onNavigate }) {
+export default function AppShell({
+  children,
+  currentRoute,
+  onNavigate,
+  hasPrediction
+}) {
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -13,10 +18,20 @@ export default function AppShell({ children, currentRoute, onNavigate }) {
           <button type="button" className={currentRoute === 'assessment' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('assessment')}>
             Assessment
           </button>
-          <button type="button" className={currentRoute === 'results' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('results')}>
+          <button
+            type="button"
+            className={currentRoute === 'results' ? 'nav-link active' : 'nav-link'}
+            onClick={() => onNavigate('results')}
+            disabled={!hasPrediction}
+          >
             Results
           </button>
-          <button type="button" className={currentRoute === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('chat')}>
+          <button
+            type="button"
+            className={currentRoute === 'chat' ? 'nav-link active' : 'nav-link'}
+            onClick={() => onNavigate('chat')}
+            disabled={!hasPrediction}
+          >
             Lifestyle Chatbot
           </button>
         </nav>
