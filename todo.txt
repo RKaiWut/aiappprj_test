@@ -13,4 +13,4 @@ Remove pseudo model prediction -> e.g. If model doesn't load, don't pretend it w
 
 
 ===
-Check in with groupmates what backend they use, assuming flask but use fastapi
+Check in with groupmates what backend they use, assuming flask but i use fastapi
