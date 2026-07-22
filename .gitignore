@@ -227,3 +227,4 @@ build/
 .nuxt/
 out/
 *.data
+last_prompt.txt

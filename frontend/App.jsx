@@ -23,8 +23,7 @@ export default function App() {
     loadStoredAssessmentState()
   );
 
-  // Stores chat messages
-  const [chatMessages, setChatMessages] = useState([]);
+  const chatMessages = assessmentState?.chatMessages ?? [];
   const [loading, setLoading] = useState(false);
 
   // Verify if user has done an assessment, blocks access to Results & Chatbot otherwise.
@@ -54,7 +53,8 @@ export default function App() {
 
       setAssessmentState({
         ...response,
-        sessionId: null
+        sessionId: null,
+        chatMessages: []
       });
 
       navigate('results');
@@ -68,12 +68,31 @@ export default function App() {
   // Clear assessmnet if restarted
   function handleRestart() {
     setAssessmentState(null);
-    setChatMessages([]);
     navigate('home');
   }
 
   function handleEditAssessment() {
     navigate('assessment');
+  }
+
+  function setChatMessages(messagesOrUpdater) {
+    setAssessmentState(previous => {
+      if (!previous) {
+        return previous;
+      }
+
+      const currentMessages = previous.chatMessages ?? [];
+
+      const nextMessages =
+        typeof messagesOrUpdater === 'function'
+          ? messagesOrUpdater(currentMessages)
+          : messagesOrUpdater;
+
+      return {
+        ...previous,
+        chatMessages: nextMessages
+      };
+    });
   }
 
   // Navigation pages & loading

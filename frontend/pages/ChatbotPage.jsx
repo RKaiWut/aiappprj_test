@@ -99,10 +99,10 @@ How can I help you today?`
                     prediction.backendPrediction
                 );
 
-                setAssessmentState({
-                    ...assessmentState,
+                setAssessmentState(previous => ({
+                    ...previous,
                     sessionId
-                });
+                }));
 
                 setStatus('Chat ready.');
             } catch (error) {
