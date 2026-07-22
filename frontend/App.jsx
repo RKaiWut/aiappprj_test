@@ -51,12 +51,15 @@ export default function App() {
     setLoading(true);
     try {
       const response = await submitAssessment(values);
+
       setAssessmentState({
         ...response,
         sessionId: null
       });
 
       navigate('results');
+    } catch (error) {
+      alert(error.message);
     } finally {
       setLoading(false);
     }
