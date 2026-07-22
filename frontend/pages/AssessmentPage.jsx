@@ -42,11 +42,16 @@ function formatFieldValue(field, values, fieldName) {
     const option = field.options.find((entry) => String(entry.value) === String(value));
     return option ? option.label : String(value);
   }
-  
+
   return String(value);
 }
 
-export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }) {
+export default function AssessmentPage({
+  onSubmitAssessment,
+  loading,
+  onCancel,
+  initialValues = null
+}) {
   const [stepIndex, setStepIndex] = useState(0);
   const {
     values,
@@ -57,7 +62,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
     validateAll,
     getAnsweredCount,
     getAnsweredNames
-  } = useAssessmentForm();
+  } = useAssessmentForm(initialValues);
 
   const answeredFieldNames = getAnsweredNames();
   const answeredSet = useMemo(() => new Set(answeredFieldNames), [answeredFieldNames]);
@@ -135,6 +140,10 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
   }
 
   async function handleSubmit(event) {
+
+    console.log("=== handleSubmit called ===");
+    console.trace();
+
     event.preventDefault();
     if (!validateAll()) {
       return;
@@ -174,91 +183,97 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
               })}
             </div>
 
-            <form className="assessment-form" onSubmit={handleSubmit} noValidate>
-              {currentStep?.id === 'intro' ? (
-                <div className="assessment-intro">
-                  <p>This check uses your age, sex, symptoms, and any clinic results you already have.</p>
-                  <ul>
-                    <li>Takes a few minutes.</li>
-                    <li>ECG and lab fields are optional.</li>
-                    <li>Track progress on the right.</li>
-                  </ul>
-                </div>
-              ) : currentStep?.id === 'review' ? (
-                <div className="assessment-review">
-                  {validationErrors.length ? (
-                    <div className="assessment-review__alert" role="alert">
-                      <strong>Please complete required fields before running the assessment.</strong>
-                      <ul>
-                        {Object.entries(errors)
-                          .filter(([, message]) => message)
-                          .map(([fieldName, message]) => (
-                            <li key={fieldName}>{message}</li>
-                          ))}
-                      </ul>
-                    </div>
-                  ) : null}
-
-                  <div className="assessment-review__section">
-                    <h3>Answered</h3>
-                    <div className="assessment-review__list">
-                      {answeredFields.length ? (
-                        answeredFields.map((fieldName) => {
-                          const field = getFieldDefinition(fieldName);
-                          return (
-                            <div key={fieldName} className="assessment-review__item">
-                              <strong>{field.label}</strong>
-                              <span>{formatFieldValue(field, values, fieldName)}</span>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p>No answers yet.</p>
-                      )}
-                    </div>
+            <form
+              className="assessment-form"
+              onSubmit={(event) => {
+                console.log("FORM SUBMIT EVENT");
+                event.preventDefault();
+              }}
+              noValidate
+            >              {currentStep?.id === 'intro' ? (
+              <div className="assessment-intro">
+                <p>This check uses your age, sex, symptoms, and any clinic results you already have.</p>
+                <ul>
+                  <li>Takes a few minutes.</li>
+                  <li>ECG and lab fields are optional.</li>
+                  <li>Track progress on the right.</li>
+                </ul>
+              </div>
+            ) : currentStep?.id === 'review' ? (
+              <div className="assessment-review">
+                {validationErrors.length ? (
+                  <div className="assessment-review__alert" role="alert">
+                    <strong>Please complete required fields before running the assessment.</strong>
+                    <ul>
+                      {Object.entries(errors)
+                        .filter(([, message]) => message)
+                        .map(([fieldName, message]) => (
+                          <li key={fieldName}>{message}</li>
+                        ))}
+                    </ul>
                   </div>
+                ) : null}
 
-                  <div className="assessment-review__section">
-                    <h3>Still blank</h3>
-                    <div className="assessment-review__list assessment-review__grid">
-                      {blankFields.length ? (
-                        blankFields.map((fieldName) => {
-                          const field = getFieldDefinition(fieldName);
-                          return (
-                            <div key={fieldName} className="assessment-review__item assessment-review__item--muted">
-                              <strong>{field.label}</strong>
-                              <span>{field.required ? 'Required' : 'Optional'}</span>
-                            </div>
-                          );
-                        })
-                      ) : (
-                        <p>All fields are filled in.</p>
-                      )}
-                    </div>
+                <div className="assessment-review__section">
+                  <h3>Answered</h3>
+                  <div className="assessment-review__list">
+                    {answeredFields.length ? (
+                      answeredFields.map((fieldName) => {
+                        const field = getFieldDefinition(fieldName);
+                        return (
+                          <div key={fieldName} className="assessment-review__item">
+                            <strong>{field.label}</strong>
+                            <span>{formatFieldValue(field, values, fieldName)}</span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p>No answers yet.</p>
+                    )}
                   </div>
                 </div>
-              ) : (
-                <div className="assessment-group">
-                  <div className="assessment-group__heading">
-                    <h3>{currentStep?.title}</h3>
-                    <p>{currentStep?.description}</p>
-                  </div>
 
-                  <div className="assessment-grid">
-                    {currentFields.map((field) => (
-                      <FormField
-                        key={field.name}
-                        field={field}
-                        value={values[field.name]}
-                        values={values}
-                        error={errors[field.name]}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                      />
-                    ))}
+                <div className="assessment-review__section">
+                  <h3>Still blank</h3>
+                  <div className="assessment-review__list assessment-review__grid">
+                    {blankFields.length ? (
+                      blankFields.map((fieldName) => {
+                        const field = getFieldDefinition(fieldName);
+                        return (
+                          <div key={fieldName} className="assessment-review__item assessment-review__item--muted">
+                            <strong>{field.label}</strong>
+                            <span>{field.required ? 'Required' : 'Optional'}</span>
+                          </div>
+                        );
+                      })
+                    ) : (
+                      <p>All fields are filled in.</p>
+                    )}
                   </div>
                 </div>
-              )}
+              </div>
+            ) : (
+              <div className="assessment-group">
+                <div className="assessment-group__heading">
+                  <h3>{currentStep?.title}</h3>
+                  <p>{currentStep?.description}</p>
+                </div>
+
+                <div className="assessment-grid">
+                  {currentFields.map((field) => (
+                    <FormField
+                      key={field.name}
+                      field={field}
+                      value={values[field.name]}
+                      values={values}
+                      error={errors[field.name]}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
 
               <div className="form-actions">
                 <PrimaryButton type="button" variant="ghost" onClick={onCancel}>
@@ -270,11 +285,19 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
                   </PrimaryButton>
                 ) : null}
                 {canGoNext ? (
-                  <PrimaryButton type="button" onClick={goNext}>
+                  <PrimaryButton
+                    key="next-button"
+                    type="button"
+                    onClick={goNext}
+                  >
                     Next
                   </PrimaryButton>
                 ) : (
-                  <PrimaryButton type="submit" disabled={loading}>
+                  <PrimaryButton
+                    key="submit-button"
+                    type="submit"
+                    disabled={loading}
+                  >
                     {loading ? 'Checking...' : 'Run Assessment'}
                   </PrimaryButton>
                 )}

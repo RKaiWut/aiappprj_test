@@ -10,8 +10,12 @@ import {
   isChestPainTriageComplete
 } from '../utils/payload';
 
-export function useAssessmentForm() {
-  const [values, setValues] = useState(() => createInitialAssessmentValues());
+export function useAssessmentForm(initialValues = null) {
+  const [values, setValues] = useState(() => (
+    initialValues
+      ? { ...createInitialAssessmentValues(), ...initialValues }
+      : createInitialAssessmentValues()
+  ));
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
 

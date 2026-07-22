@@ -49,10 +49,12 @@ export default function App() {
   async function handleSubmitAssessment(values) {
     setLoading(true);
     try {
+      const formValues = structuredClone(values);
       const response = await submitAssessment(values);
 
       setAssessmentState({
         ...response,
+        assessmentForm: formValues,
         sessionId: null,
         chatMessages: []
       });
@@ -113,6 +115,7 @@ export default function App() {
           onSubmitAssessment={handleSubmitAssessment}
           loading={loading}
           onCancel={() => navigate('home')}
+          initialValues={assessmentState?.assessmentForm}
         />
       )}
 
