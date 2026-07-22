@@ -1,0 +1,16 @@
+1.
+Handle empty/error states gracefully. -> e.g. Heading to chat page without assessment breaks
+
+2.
+Add a New Chat button.
+
+
+3.
+Improve the loading indicator.
+Clean up the backend and remove debug code.
+Persist chat messages in sessionStorage.
+Remove pseudo model prediction -> e.g. If model doesn't load, don't pretend it works. (buildStubPrediction in frontend/predictionService.js)
+
+
+===
+Check in with groupmates what backend they use, assuming flask but use fastapi
