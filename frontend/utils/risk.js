@@ -1,5 +1,5 @@
 export function getRiskLevel(probability) {
-  if (probability < 0.3) {
+  if (probability < 0.2) {
     return 'Low';
   }
 

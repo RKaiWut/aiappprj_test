@@ -228,3 +228,4 @@ build/
 out/
 *.data
 last_prompt.txt
+/exports

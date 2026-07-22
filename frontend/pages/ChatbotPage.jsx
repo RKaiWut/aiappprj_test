@@ -113,7 +113,7 @@ How can I help you today?`
 
         initializeChat();
         inputRef.current?.focus();
-    }, []);
+    }, [assessmentState?.sessionId]);
 
     async function handleSend() {
         const message = input.trim();
@@ -160,6 +160,22 @@ How can I help you today?`
         } finally {
             setLoading(false);
         }
+    }
+
+    function handleNewChat() {
+        setAssessmentState(previous => {
+            if (!previous) {
+                return previous;
+            }
+
+            return {
+                ...previous,
+                sessionId: null,
+                chatMessages: []
+            };
+        });
+
+        setStatus('Preparing chat...');
     }
 
     function handleKeyDown(event) {
@@ -231,6 +247,14 @@ How can I help you today?`
                         Back
                     </PrimaryButton>
 
+                    <PrimaryButton
+                        variant="ghost"
+                        onClick={handleNewChat}
+                        disabled={loading}
+                    >
+                        New Chat
+                    </PrimaryButton>
+                    
                     <PrimaryButton
                         onClick={handleSend}
                         disabled={loading || !input.trim()}

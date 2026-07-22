@@ -98,7 +98,7 @@ def format_prediction(raw_result, patient, top_n=5, min_impact=0.10):
 ### PRINT FORMAT
 # 0.1 Set risk threshold
 def get_risk_level(probability):
-    if probability < 0.3:
+    if probability < 0.2:
         return "Low"
     elif probability < 0.6:
         return "Medium"
