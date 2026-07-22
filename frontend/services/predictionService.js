@@ -17,13 +17,18 @@ function isPresent(value) {
 
 function normalizeApiResponse(data) {
   return {
+    // Keep the original backend response for the chatbot
+    backendPrediction: data,
+
+    // Frontend-friendly fields
     prediction: data.prediction,
     rawProbability: data.raw_probability,
     riskProbability: data.risk_probability,
     riskPercent: `${data.risk_percent.toFixed(1)}%`,
     riskLevel: data.risk_level,
     topFactors: data.top_factors ?? [],
-    lifestyleAdvice: data.lifestyle_advice ?? getLifestyleAdvice(data.risk_level),
+    lifestyleAdvice:
+      data.lifestyle_advice ?? getLifestyleAdvice(data.risk_level),
     medicalDisclaimer: data.medical_disclaimer ?? ''
   };
 }
@@ -53,6 +58,7 @@ function buildStubFactors(payload) {
   return factors.slice(0, 4);
 }
 
+// not ai model idk it just generated lol
 export function buildStubPrediction(payload) {
   const ageScore = isPresent(payload.age) ? clamp((payload.age - 35) / 70, 0, 1) * 0.18 : 0;
   const bpScore = isPresent(payload.trestbps) ? clamp((payload.trestbps - 110) / 90, 0, 1) * 0.16 : 0;

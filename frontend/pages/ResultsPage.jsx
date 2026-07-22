@@ -15,7 +15,8 @@ const emptyResult = {
 export default function ResultsPage({
   assessmentState,
   onRestart,
-  onEditAssessment
+  onEditAssessment,
+  onOpenChat
 }) {
   const displayResult =
     assessmentState?.prediction ?? emptyResult;
@@ -72,6 +73,14 @@ export default function ResultsPage({
           </PrimaryButton>
           <PrimaryButton type="button" onClick={onRestart}>
             Return Home
+          </PrimaryButton>
+        </div>
+        <div>
+          <PrimaryButton
+            type="button"
+            onClick={onOpenChat}
+          >
+            Open AI Chat
           </PrimaryButton>
         </div>
       </SectionCard>

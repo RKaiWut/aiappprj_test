@@ -71,6 +71,7 @@ def build_prompt(
     Builds the complete prompt sent to Gemini.
     """
 
+    print("check", prediction)
     prompt = f"""
 {SYSTEM_PROMPT}
 

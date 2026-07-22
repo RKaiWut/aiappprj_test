@@ -44,219 +44,45 @@ You heart has issues with circulating oxygen, this limits the exercise you can d
 - If you encounter chest pain, stop exercising immediately and breathe.
 
 # Patient's Assessment
-age: 69
+age: 66
 sex: 1
-cp: 4
-trestbps: 150
-chol: 260
-fbs: 0
-restecg: 1
-thalach: 120
+cp: 2
 exang: 1
-oldpeak: 2.3
-slope: 2
-ca: 2
-thal: 7
+trestbps: 123
+chol: 123
+fbs: 1
+restecg: None
+thalach: 123
+oldpeak: None
+slope: None
+ca: None
+thal: None
 
 #Prediction Results
 
 Risk Level:
-High
+Moderate
 
 Estimated CAD Risk:
-83.0%
+48.9%
 
 Top Contributing Factors:
-- Age
-- Oldpeak
-- Exercise-induced angina
+- {'feature': 'Chest Pain (Atypical Angina)', 'impact': -0.827, 'direction': 'decrease'}
+- {'feature': 'Thalassemia', 'impact': 0.493, 'direction': 'increase'}
+- {'feature': 'Number of Major Vessels', 'impact': 0.329, 'direction': 'increase'}
+- {'feature': 'ST Segment Slope', 'impact': -0.307, 'direction': 'decrease'}
+- {'feature': 'Exercise-Induced Angina', 'impact': 0.3, 'direction': 'increase'}
 
 # Reference Information
+=== Knowledge Start ===
 
-==================================================
-REFERENCE DOCUMENT
-Cholesterol and Heart Disease
-==================================================
 
-Source: Health Hub SG
 
-What Is Cholesterol?
-Cholesterol is a waxy, fat-like substance found in the cell walls of our body, from the nervous system to the liver to the heart. The body uses cholesterol to make hormones, bile acids, vitamin D and other substances.
-
-Causes of High Blood Cholesterol
-Various factors may contribute to unhealthy cholesterol levels:
-
-Heredity
-Age
-Sex
-Diet (particularly the intake of foods rich in saturated fat, trans fat, cholesterol)
-Being overweight/obesity
-Physical inactivity
-Where Does Cholesterol Come From
-Our liver produces most of the cholesterol found in our body; the rest of the cholesterol is contributed by the foods we eat. 
-
-Dietary cholesterol comes only from foods of animal origin, such as liver and other organ meats, egg yolks (but not the whites, which have no cholesterol), shrimp and whole milk dairy products including butter, cream and cheese.
-
-Types of Cholesterol
-Cholesterol circulates in the bloodstream in packages called lipoproteins, which is a combination of cholesterol and protein. There are two main types of lipoproteins:
-
-Low-density lipoprotein (LDL), commonly known as “bad” cholesterol as it carries cholesterol to tissues via blood vessels and arteries. This “bad” cholesterol causes heart disease by building up in coronory arteries
-High-density lipoprotein (HDL), which is also called “good” cholesterol as it takes cholesterol from tissues to the liver, hence removing it from the body
-Does Cholesterol Cause Heart Disease
-High blood cholesterol causes heart disease when cholesterol starts building up in the coronary arteries of the heart. The relationship between cholesterol and heart disease is cumulative and gradual — if there is excess cholesterol in the blood, some of it can become trapped within the artery walls. Over time, this builds up as “plaque”, which narrows blood vessels and makes them less flexible, a condition called atherosclerosis or hardening of the arteries. 
- 
-This can happen to blood vessels anywhere in the body, including those of the heart, which are called the coronary arteries. When atherosclerosis affects the coronary arteries, the condition is called coronary heart disease or coronary artery disease.
-
-==================================================
-REFERENCE DOCUMENT
-Heart Health Basic Dietary Guidelines
-==================================================
-
-Source: Health Hub SG
-
-These are basic dietary guidelines to help you make the right choices on foods that are good for the heart.
-
-Moderate Your Sodium Intake for Better Heart Health
-Sauces, canned and processed foods contain a high content of sodium, so a minimal amount of these products should be consumed.
-
-Taste your food first before adding salt or sauces. If necessary, do so sparingly.
-Avoid salted and preserved food, such as ikan bilis (dried anchovies), salted eggs, luncheon meat, sausages and ham.
-Ask for less gravy or sauce when eating out.
-Spice up your dishes with garlic, onion, ginger, vinegar, lemon juice, mint leaves, black pepper or coriander instead of seasonings containing sodium.
-Get Your Fat Balance Right
-To reduce your blood cholesterol level, it is important to reduce the total fat intake from your diet. However, there are different types of fats in our food, and not all fats are the same.
-
-Saturated fat — this is high-cholesterol fat, mainly found as animal fat or in full-fat dairy products and food prepared with palm oil, coconut oil and coconut milk.
-Trans fat — this, too, is high-cholesterol fat, mainly found in commercial deep-fried food, baked products, and fast food.
-Monounsaturated and polyunsaturated fats — these are healthier fats, which are mainly found in vegetable oils (e.g., olive oil and canola oil), nuts, seeds, and oily fish.
-Tips to reduce your total fat intake:
-
-Use less oil when cooking, and remove all visible fat before eating.
-Instead of deep-frying food, select healthier cooking methods such as steaming, boiling, and grilling.
-Choose lean meat or poultry without skin.
-Limit deep-fried foods to one or two times a week.
-Choose fat-free or lower-fat food products, such as low-fat milk and fat-free yoghurt.
-Go for healthier cooking oils with polyunsaturated fat (e.g., corn, soybean) or monounsaturated fat (e.g., olive, canola).
-
-Moderate Cholesterol Intake with a Low-Cholesterol Diet
-
-Avoid Excessive Alcohol Intake to Keep Your Heart Healthy
-
-Excessive alcohol consumption is related to increased blood triglycerides level, high blood pressure, stroke, increased body weight, liver problem, abnormal heart rhythms, and some cancers.
-
-Some studies have shown that moderate alcohol consumption might benefit heart failure patients; however, the results are inconclusive. Therefore, given the possible health risks associated with drinking, it is recommended that people who do not consume any alcohol should not start drinking.
-
-Consult your dietitian or doctor on the benefits and risks of consuming alcohol in moderation.
-
-Increase Fibre Intake
-Whole grains, fruits and vegetables which are high in fibre are known to be beneficial in lowering blood pressure.
-
-Choose a whole meal or multigrain bread over white bread.
-Choose fruit or vegetables instead of salty snack foods.
-Aim for two servings of fruits and two servings of vegetables a day.
-
-Control Fluid Intake to Control the Symptom of Heart Failure
-
-Symptoms of heart failure may be controlled by restricting your daily fluid intake. Check with your doctors if there is a need for fluid restriction and the recommended amount of your daily fluid intake. Sources of fluid include plain water and any type of beverage, soup, fruit, porridge etc.
-
-Sources of Further Information
-Dietitian — to find a dietitian in Tan Tock Seng Hospital, call 6357 8322 for an appointment. It is recommended that you consult a dietitian for an evaluation of your current eating habits and an assessment of your specific dietary needs for your health conditions. Individualised advice and a personalised nutrition plan, such as a cholesterol diet plan, can be developed to meet your nutritional needs.
-Your doctor — you will need to obtain a referral from your doctor for a consultation with a dietician.
-
-==================================================
-REFERENCE DOCUMENT
-High Blood Pressure Healthy Eating Guide
-==================================================
-
-Source: Health Hub SG
-
-What is Hypertension or High Blood Pressure?
-Hypertension refers to a condition where the blood is pumped around the body at a higher pressure. Hypertension is a silent killer as it may not produce any symptoms. Prolonged high blood pressure can damage blood vessels and increase the risk of developing kidney failure, coronary heart disease and stroke.
-
-Taking Control of Hypertension
-Regular exercise and a healthy diet that includes foods that lower blood pressure can help manage hypertension naturally. This approach may also reduce your reliance on medication to control the disease. 
-
-Related: Eat to Lower Blood Pressure
-
-Basic Dietary Guidelines for Hypertension
-1. Moderate Your Sodium Intake
-Salt contains 40 percent sodium, which is a mineral essential for the normal functioning of the body. However, if eaten in excess, sodium raises blood pressure, especially in sodium-sensitive individuals. Scientific studies have provided strong evidence that lowering sodium intake is beneficial in reducing blood pressure.
-
-Salt and sauces added in food preparation and at the table contribute to most of the sodium we consume daily. Canned and processed foods also generally have a high sodium content.
-
-Here are ways to effectively reduce sodium intake:
-
-Eating at Home 
-Cook with less salt, sauces, stock cubes, and seasoning powders as many of these flavourings contain a lot of sodium.
-Enhance the taste of food with natural herbs and spices like onion, ginger, garlic, chilli, parsley, spring onions, cinnamon and cloves.
-Avoid using salted and preserved food such as ikan bilis, salted fish, salted eggs, luncheon meat, sausages and ham.
-Eating Out 
-Ask for your food to be prepared with less salt and sauces, where possible.
-Ask for the sauces to be served on the side. Taste food and try not to add more salt or sauces to the food at the table if the food is already palatable.
-Avoid drinking soup stock and sauces as they contain a lot of sodium.
-Shopping  
-Buy fresh food as often as possible.
-Use the Nutrition Information Panel on food labels and select food products with less sodium. Products with the Healthier Choice Symbol contain less sodium than similar products in the same category.
-Related: My Healthy Plate
-
-2. Increase Intake of Fibre-Rich Food 
-Wholegrains, fruits and vegetables are high in fibre, magnesium and potassium, which are beneficial foods that lower blood pressure.
-
-Replace white bread with wholemeal or multigrain bread.
-Choose fruits or vegetables instead of salty snack foods. Aim for two servings of fruits and two servings of vegetables per day.
-Related: More Fibre for a Fit and Fabulous You
-
-3. Limit Fat Intake 
-Dietary fat is high in calories, and excessive intake can lead to weight gain and increase your risk of developing high blood pressure.
-
-Use less oil when cooking and remove all visible fat before eating.
-Select healthier cooking methods such as steaming, boiling and grilling instead of deep-frying.
-Choose lean meat or poultry without skin.
-Limit consumption of deep-fried foods to one to two times a week.
-Choose fat-free or lower-fat foods, such as low-fat milk and fat-free yoghurt.
-Use the Nutrition Information Panel on food labels to select products that are lower in total fat, saturated fat, trans fat and cholesterol. A simple way to identify a healthier product within each food category is to select those with the Healthier Choice Symbol.
-
-When you eat out, do a visual check and pick cooked food items that do not look greasy. Avoid oily, deep-fried food and dishes with gravies that have oil floating on the surface.
-
-Related: Getting the Fats Right!
-
-4. Limit Alcohol Consumption 
-Frequent consumption of alcohol causes your heart to pump harder and faster, thereby increasing blood pressure. Avoid alcohol if you have high blood triglycerides levels, kidney disease, diabetes mellitus or heart disease.
-
-Limit or avoid alcohol. If you choose to drink, moderate your intake of alcoholic drinks to not more than one standard drink per day (e.g. 100ml wine = 1 standard drink).
-Related: Alcohol and Health: Setting Your Drink Limits
-
-5. Lose Weight, if Needed 
-Besides eating foods for high blood pressure control, one of the most effective ways to combat hypertension is to lose some weight if you are overweight. Even a modest weight loss goes a long way to reducing blood pressure. Stick to a diet with fewer calories and engage in regular exercise to achieve a healthy weight.
-
-Where Can I Get More Healthy Eating Dietary Guidelines?
-Dietitian
-For more personalised dietary guidelines for hypertension, make an appointment with a dietitian. 
-
-It is recommended that you consult a dietitian to evaluate your current eating habits and an assessment of your specific dietary needs for your health conditions. Individualised advice and a nutrition plan can be developed to meet your nutritional needs.
-
-Your Doctor
-You will need to obtain a referral from your doctor for a consultation with a dietitian.
-
-Disclaimer: This page has been produced to provide general nutrition information. It is not designed to replace any treatment or advice by a dietitian or doctor.
+=== Knowledge End ===
 
 # Conversation History (Latest message is current message)
 
-User: Can I eat pork?
-
-Assistant: Yes, you can eat pork, but choose lean cuts. 
-
-Here are some healthy tips:
-* Choose lean pork. 
-* Remove all visible fat before eating.
-* Avoid deep-frying. Grill, steam, or boil instead.
-* Avoid processed pork like sausages, ham, or luncheon meat. These are high in sodium.
-
-Source: *Health Hub SG.*
-
-Please consult your doctor or a dietitian for a personalized meal plan.
-
-User: What about chicken?
+User: can you explain my assessment and results
 
 
 Assistant:

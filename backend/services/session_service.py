@@ -1,5 +1,6 @@
 from uuid import uuid4
 from typing import Any
+import os
 
 # In-memory session store
 _sessions: dict[str, dict[str, Any]] = {}
@@ -16,7 +17,7 @@ def create_session(assessment: dict, prediction: dict) -> str:
         "prediction": prediction,
         "messages": [],
     }
-
+    print("PID:", os.getpid())
     return session_id
 
 
@@ -24,6 +25,8 @@ def get_session(session_id: str) -> dict | None:
     """
     Returns the session dictionary or None if not found.
     """
+    print("PID:", os.getpid())
+    print("Existing:", list(_sessions.keys()))
     return _sessions.get(session_id)
 
 

@@ -3,6 +3,7 @@ import AppShell from './components/AppShell';
 import AssessmentPage from './pages/AssessmentPage';
 import HomePage from './pages/HomePage';
 import ResultsPage from './pages/ResultsPage';
+import ChatPage from './pages/ChatbotPage';
 import { submitAssessment } from './services/predictionService';
 import {
   loadStoredAssessmentState,
@@ -11,7 +12,9 @@ import {
 
 function getRouteFromHash() {
   const hash = window.location.hash.replace('#', '');
-  return hash === 'assessment' || hash === 'results' ? hash : 'home';
+  return ['assessment', 'results', 'chat'].includes(hash)
+  ? hash
+  : 'home';
 }
 
 export default function App() {
@@ -64,7 +67,8 @@ export default function App() {
     <AppShell currentRoute={route} onNavigate={navigate}>
       {route === 'home' ? <HomePage onStartAssessment={() => navigate('assessment')} /> : null}
       {route === 'assessment' ? <AssessmentPage onSubmitAssessment={handleSubmitAssessment} loading={loading} onCancel={() => navigate('home')} /> : null}
-      {route === 'results' ? <ResultsPage assessmentState={assessmentState} onRestart={handleRestart} onEditAssessment={handleEditAssessment} /> : null}
+      {route === 'results' ? <ResultsPage assessmentState={assessmentState} onRestart={handleRestart} onEditAssessment={handleEditAssessment} onOpenChat={() => navigate('chat')} /> : null}
+      {route === 'chat' ? (<ChatPage assessmentState={assessmentState} setAssessmentState={setAssessmentState} onBack={() => navigate('results')} />) : null}
     </AppShell>
   );
 }

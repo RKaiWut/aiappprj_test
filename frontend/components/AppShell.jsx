@@ -16,6 +16,9 @@ export default function AppShell({ children, currentRoute, onNavigate }) {
           <button type="button" className={currentRoute === 'results' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('results')}>
             Results
           </button>
+          <button type="button" className={currentRoute === 'chat' ? 'nav-link active' : 'nav-link'} onClick={() => onNavigate('chat')}>
+            Lifestyle Chatbot
+          </button>
         </nav>
       </header>
       <main className="app-main">{children}</main>

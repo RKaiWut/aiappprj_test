@@ -139,7 +139,7 @@ export default function AssessmentPage({ onSubmitAssessment, loading, onCancel }
     if (!validateAll()) {
       return;
     }
-    console.log(values);
+    // console.log(values);
     await onSubmitAssessment(values);
   }
 
